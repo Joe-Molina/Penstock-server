@@ -1,0 +1,22 @@
+{
+  "name": "pedidos",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "ts-node-dev src/index.ts",
+    "start": "node dist/index.js",
+    "lint": "ts-standard",
+    "tsc": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "5.0.0",
+    "express": "4.21.1",
+    "ts-node-dev": "2.0.0",
+    "typescript": "^5.6.3"
+  }
+}
