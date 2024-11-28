@@ -1,0 +1,101 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  username String
+  password String
+  email    String   @unique
+  role     String
+  client   Client[]
+  Seller   Seller[]
+}
+
+model Client {
+  id                     Int                      @id @default(autoincrement())
+  nombres                String
+  apellidos              String
+  representante          String
+  direccion              String
+  user                   User                     @relation(fields: [userId], references: [id])
+  userId                 Int
+  Order                  Order[]
+  salesperson_assignment salesperson_assignment[]
+}
+
+model Seller {
+  id                     Int                      @id @default(autoincrement())
+  nombres                String
+  apellidos              String?
+  user                   User                     @relation(fields: [userId], references: [id])
+  userId                 Int
+  salesperson_assignment salesperson_assignment[]
+}
+
+model salesperson_assignment {
+  id       Int    @id @default(autoincrement())
+  seller   Seller @relation(fields: [sellerId], references: [id])
+  sellerId Int
+  client   Client @relation(fields: [clientId], references: [id])
+  clientId Int    @unique
+}
+
+model Category {
+  id      Int       @id @default(autoincrement())
+  name    String
+  Product Product[]
+}
+
+model Product {
+  id           Int            @id @default(autoincrement())
+  name         String
+  price        Float
+  photo        String
+  description  String
+  category     Category       @relation(fields: [categoryId], references: [id])
+  categoryId   Int
+  Order_Detail Order_Detail[]
+}
+
+model Order {
+  id           Int            @id @default(autoincrement())
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  revised      Boolean        @default(false)
+  client       Client         @relation(fields: [clientId], references: [id])
+  clientId     Int
+  Order_Detail Order_Detail[]
+  Invoice      Invoice[]
+}
+
+model Order_Detail {
+  id        Int      @id @default(autoincrement())
+  order     Order    @relation(fields: [orderId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orderId   Int
+  product   Product  @relation(fields: [productId], references: [id])
+  productId Int
+  amount    Int
+}
+
+model Invoice {
+  id             Int      @id @default(autoincrement())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  invoice_number Int
+  order          Order    @relation(fields: [orderId], references: [id])
+  orderId        Int
+}
