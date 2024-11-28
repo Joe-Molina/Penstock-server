@@ -25,10 +25,10 @@ model User {
 
 model Client {
   id                     Int                      @id @default(autoincrement())
-  nombres                String
-  apellidos              String
-  representante          String
-  direccion              String
+  name                   String
+  lastname               String
+  store                  String
+  address                String
   user                   User                     @relation(fields: [userId], references: [id])
   userId                 Int
   Order                  Order[]
@@ -37,8 +37,8 @@ model Client {
 
 model Seller {
   id                     Int                      @id @default(autoincrement())
-  nombres                String
-  apellidos              String?
+  name                   String
+  lastname               String?
   user                   User                     @relation(fields: [userId], references: [id])
   userId                 Int
   salesperson_assignment salesperson_assignment[]
