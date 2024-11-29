@@ -4,6 +4,7 @@ import cors from 'cors';
 // import jwt from 'jsonwebtoken'
 // import { JWT_SECRET_KEY } from '../config';
 import auth from './api/auth/auth.routes';
+import products from './api/products/products.routes';
 import cookieParser from 'cookie-parser'
 
 const PORT = process.env.PORT ?? 3000;
@@ -14,6 +15,7 @@ app.use(cors());
 app.use(cookieParser())
 
 app.use('/auth', auth);
+app.use('/products', products);
 
 app.listen(PORT, () => {
 

@@ -86,7 +86,30 @@ export class authModel {
     }
   }
 
+  static async createAdmin({ username, password, email, role }: User) {
+    const newUser = await prisma.user.create({
+      data: {
+        username,
+        password,
+        email,
+        role,
+      }
+    })
 
+    return {
+      username: newUser.username,
+      email: newUser.email
+    }
+  }
 
+  static async assignSeller(clientId: number, sellerId: number) {
+    const asignment = await prisma.salesperson_assignment.create({
+      data: {
+        clientId,
+        sellerId
+      }
+    })
+    return asignment
+  }
 
 }

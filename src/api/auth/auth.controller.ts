@@ -79,6 +79,40 @@ export class auth {
 
   }
 
+  static async registerAdmin(req: any, res: any) {
+
+    const { username, email, password, role } = req.body
+
+    try {
+      const userExist = await authModel.findUserByUsername(username)
+
+      if (userExist) {
+        res.json({ alert: "this user already exist" })
+
+      } else {
+
+        const hashedPassword = bcrypt.hashSync(password, 10)
+
+        const admin = {
+          username,
+          password: hashedPassword,
+          email,
+          role
+        }
+
+        const newSeller = await authModel.createAdmin(admin)
+
+        res.json(newSeller)
+
+      }
+
+
+    } catch (err) {
+      res.json({ error: err })
+    }
+
+  }
+
   static async login(req: any, res: any) {
     const { username, password } = req.body
 
@@ -124,6 +158,18 @@ export class auth {
     try {
       const data = dataUser(req.cookies.access_token)
       res.json(data)
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Error interno del servidor' });
+    }
+  }
+
+  static async assignSeller(req: any, res: any) {
+    const { sellerId, clientId } = req.body
+
+    try {
+      const asignment = await authModel.assignSeller(clientId, sellerId)
+      res.json(asignment)
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Error interno del servidor' });
