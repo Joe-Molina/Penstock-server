@@ -2,6 +2,7 @@ import { authModel } from './auth.model'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { JWT_SECRET_KEY } from '../../../config'
+import { dataUser } from '../../services/dataUser'
 
 export class auth {
   static async registerClient(req: any, res: any) {
@@ -88,6 +89,7 @@ export class auth {
 
         const token = jwt.sign({ id: user.id, username: user.username, email: user.email, role: user.role }, JWT_SECRET_KEY, {
           expiresIn: '1h'
+
         })
 
         const matchPassword = bcrypt.compareSync(password, user.password)
@@ -115,22 +117,13 @@ export class auth {
 
   static async logout(_req: any, res: any) {
     res.clearCookie('access_token')
-    res.send('coocie is cleared correctly')
+    res.send('coockie is cleared correctly')
   }
 
   static async protected(req: any, res: any) {
     try {
-
-      const token = await req.cookies.access_token
-
-      console.log(req.cookies)
-
-      if (!token) {
-        res.json({ data: false })
-      } else {
-        const data = jwt.verify(token, JWT_SECRET_KEY)
-        res.json(data)
-      }
+      const data = dataUser(req.cookies.access_token)
+      res.json(data)
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Error interno del servidor' });
