@@ -1,10 +1,16 @@
-import jwt from 'jsonwebtoken'
-import { JWT_SECRET_KEY } from '../../config'
+import jwt from "jsonwebtoken";
+import { JWT_SECRET_KEY } from "../../config";
 
 export const dataUser = (key: string) => {
   if (!key) {
-    return false
+    return false;
   } else {
-    return jwt.verify(key, JWT_SECRET_KEY)
+    const user = jwt.verify(key, JWT_SECRET_KEY) as {
+      id: number;
+      username: string;
+      email: string;
+      role: string;
+    };
+    return user;
   }
-}
+};
