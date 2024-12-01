@@ -1,47 +1,57 @@
-import { prisma } from '../../utils/prisma'
+import { prisma } from "../../utils/prisma";
 
 interface User {
-  username: string
-  password: string
-  email: string
-  role: string
+  username: string;
+  password: string;
+  email: string;
+  role: string;
 }
 
 interface Client extends User {
-  name: string
-  lastname: string
-  store: string
-  address: string
+  name: string;
+  lastname: string;
+  store: string;
+  address: string;
+  sellerId: number;
 }
 
 interface Seller extends User {
-  name: string
-  lastname: string
+  name: string;
+  lastname: string;
 }
 
 export class authModel {
-
   static async findUserById(id: number) {
     const user = await prisma.user.findFirst({
       where: {
-        id
-      }
-    })
+        id,
+      },
+    });
 
-    return user
+    return user;
   }
 
   static async findUserByUsername(username: string) {
     const user = await prisma.user.findFirst({
       where: {
-        username
-      }
-    })
+        username,
+      },
+    });
 
-    return user
+    return user;
   }
 
-  static async createClient({ username, password, email, role, name, lastname, store, address }: Client) {
+  static async createClient({
+    username,
+    password,
+    email,
+    role,
+    name,
+    lastname,
+    store,
+    address,
+    sellerId,
+  }: Client) {
     const newClient = await prisma.user.create({
       data: {
         username,
@@ -53,18 +63,30 @@ export class authModel {
             name,
             lastname,
             store,
-            address
-          }
-        }
-      }
-    })
+            address,
+            salesperson_assignment: {
+              create: {
+                sellerId,
+              },
+            },
+          },
+        },
+      },
+    });
     return {
       username: newClient.username,
-      email: newClient.email
-    }
+      email: newClient.email,
+    };
   }
 
-  static async createSeller({ username, password, email, role, name, lastname }: Seller) {
+  static async createSeller({
+    username,
+    password,
+    email,
+    role,
+    name,
+    lastname,
+  }: Seller) {
     const newClient = await prisma.user.create({
       data: {
         username,
@@ -75,15 +97,15 @@ export class authModel {
           create: {
             name,
             lastname,
-          }
-        }
-      }
-    })
+          },
+        },
+      },
+    });
 
     return {
       username: newClient.username,
-      email: newClient.email
-    }
+      email: newClient.email,
+    };
   }
 
   static async createAdmin({ username, password, email, role }: User) {
@@ -93,23 +115,22 @@ export class authModel {
         password,
         email,
         role,
-      }
-    })
+      },
+    });
 
     return {
       username: newUser.username,
-      email: newUser.email
-    }
+      email: newUser.email,
+    };
   }
 
   static async assignSeller(clientId: number, sellerId: number) {
     const asignment = await prisma.salesperson_assignment.create({
       data: {
         clientId,
-        sellerId
-      }
-    })
-    return asignment
+        sellerId,
+      },
+    });
+    return asignment;
   }
-
 }

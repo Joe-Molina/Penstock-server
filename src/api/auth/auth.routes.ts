@@ -1,20 +1,20 @@
-import { Router } from 'express'
-import { auth } from './auth.controller'
+import { Router } from "express";
+import { Auth } from "./auth.controller";
 
-const router = Router()
+const router = Router();
 
-router.post('/register_client', auth.registerClient)
+router.post("/register_client", Auth.registerClient);
 
-router.post('/register_seller', auth.registerSeller)
+router.post("/register_seller", Auth.registerSeller);
 
-router.post('/register_admin', auth.registerAdmin)
+router.post("/register_admin", Auth.registerAdmin);
 
-router.post('/login', auth.login)
+router.post("/login/", Auth.login);
 
-router.post('/logout', auth.logout)
+router.post("/logout", Auth.logout);
 
-router.get('/protected', auth.protected)
+router.post("/protected", Auth.protected);
 
-router.post('/seller_assigment', auth.assignSeller)
+router.post("/seller_assigment", Auth.assignSeller);
 
-export default router
+export default router;

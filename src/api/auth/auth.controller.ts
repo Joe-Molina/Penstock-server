@@ -4,10 +4,19 @@ import jwt from "jsonwebtoken";
 import { JWT_SECRET_KEY } from "../../../config";
 import { dataUser } from "../../services/dataUser";
 
-export class auth {
+export class Auth {
   static async registerClient(req: any, res: any) {
-    const { username, email, password, name, lastname, store, address, role } =
-      req.body;
+    const {
+      username,
+      email,
+      password,
+      name,
+      lastname,
+      store,
+      address,
+      role,
+      sellerId,
+    } = req.body;
 
     try {
       const userExist = await authModel.findUserByUsername(username);
@@ -26,6 +35,7 @@ export class auth {
           store,
           address,
           role,
+          sellerId,
         };
 
         const newClient = await authModel.createClient(client);
@@ -94,7 +104,7 @@ export class auth {
   }
 
   static async login(req: any, res: any) {
-    const { username, password } = req.body;
+    const { username, password } = req.body.credentials;
 
     try {
       const user = await authModel.findUserByUsername(username);
@@ -106,28 +116,27 @@ export class auth {
             username: user.username,
             email: user.email,
             role: user.role,
+            loged: true,
           },
           JWT_SECRET_KEY,
           {
             expiresIn: "1h",
           }
         );
-
         const matchPassword = bcrypt.compareSync(password, user.password);
-
         if (matchPassword) {
           res
             .cookie("access_token", token, {
-              secure: process.env.NODE_ENV === "production",
               httpOnly: true,
               maxAge: 1000 * 60 * 60, // 1 hour
             })
-            .send("cookie is set correctly");
+            .json({ message: "cookie set", loged: true });
         } else {
-          res.json({ alert: "incorrect password" });
+          res.json({ message: "incorrect password", loged: false });
         }
       } else {
-        res.json({ alert: "user not found" });
+        console.log(" no hay user");
+        res.json({ message: "user not found", loged: false });
       }
     } catch (error) {
       res.json(error);
@@ -141,8 +150,13 @@ export class auth {
 
   static async protected(req: any, res: any) {
     try {
-      const data = dataUser(req.cookies.access_token);
-      res.json(data);
+      const response = dataUser(req.body.key);
+
+      if (response) {
+        res.json(response);
+      } else {
+        res.json({ response: false });
+      }
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Error interno del servidor" });

@@ -5,11 +5,16 @@ import products from "./api/products/products.routes";
 import cookieParser from "cookie-parser";
 import Orders from "./api/orders/orders.routes";
 
+const corsOptions = {
+  origin: "http://localhost:3001", // El dominio desde donde haces las solicitudes
+  credentials: true, // Permite el envío de cookies
+};
+
 const PORT = process.env.PORT ?? 3000;
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(cookieParser());
 
 app.use("/auth", auth);
