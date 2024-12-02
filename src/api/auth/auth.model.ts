@@ -83,8 +83,8 @@ export class authModel {
     username,
     password,
     email,
-    role,
     name,
+    role,
     lastname,
   }: Seller) {
     const newClient = await prisma.user.create({

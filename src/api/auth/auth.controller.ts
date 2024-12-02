@@ -48,23 +48,30 @@ export class Auth {
   }
 
   static async registerSeller(req: any, res: any) {
-    const { username, email, password, name, lastname, role } = req.body;
+    const { username, email, password, name, lastname } = req.body.credentials;
+
+    console.log(req.body)
 
     try {
       const userExist = await authModel.findUserByUsername(username);
 
+      console.log(userExist)
+
       if (userExist) {
+        console.log('hola')
         res.json({ alert: "this user already exist" });
       } else {
         const hashedPassword = bcrypt.hashSync(password, 10);
+
+        console.log('hola2')
 
         const client = {
           username,
           password: hashedPassword,
           email,
           name,
+          role: "seller",
           lastname,
-          role,
         };
 
         const newSeller = await authModel.createSeller(client);
@@ -154,6 +161,25 @@ export class Auth {
 
       if (response) {
         res.json(response);
+      } else {
+        res.json({ response: false });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Error interno del servidor" });
+    }
+  }
+
+  static async protected2(req: any, res: any) {
+    try {
+      console.log(req.cookies.access_token)
+
+      const data = dataUser(req.cookies.access_token);
+      // const data = dataUser(req.cookies.access_token);
+      console.log(data)
+
+      if (data) {
+        res.json(data);
       } else {
         res.json({ response: false });
       }

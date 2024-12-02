@@ -11,9 +11,11 @@ router.post("/register_admin", Auth.registerAdmin);
 
 router.post("/login/", Auth.login);
 
-router.post("/logout", Auth.logout);
+router.get("/logout", Auth.logout);
 
 router.post("/protected", Auth.protected);
+
+router.get("/protected2", Auth.protected2);
 
 router.post("/seller_assigment", Auth.assignSeller);
 
