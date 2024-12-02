@@ -1,4 +1,4 @@
-import { authModel } from "./auth.model";
+import { AuthModel } from "./auth.model";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET_KEY } from "../../../config";
@@ -19,7 +19,7 @@ export class Auth {
     } = req.body;
 
     try {
-      const userExist = await authModel.findUserByUsername(username);
+      const userExist = await AuthModel.findUserByUsername(username);
 
       if (userExist) {
         res.json({ alert: "this user already exist" });
@@ -38,7 +38,7 @@ export class Auth {
           sellerId,
         };
 
-        const newClient = await authModel.createClient(client);
+        const newClient = await AuthModel.createClient(client);
 
         res.json(newClient);
       }
@@ -53,7 +53,7 @@ export class Auth {
     console.log(req.body)
 
     try {
-      const userExist = await authModel.findUserByUsername(username);
+      const userExist = await AuthModel.findUserByUsername(username);
 
       console.log(userExist)
 
@@ -74,7 +74,7 @@ export class Auth {
           lastname,
         };
 
-        const newSeller = await authModel.createSeller(client);
+        const newSeller = await AuthModel.createSeller(client);
 
         res.json(newSeller);
       }
@@ -87,7 +87,7 @@ export class Auth {
     const { username, email, password, role } = req.body;
 
     try {
-      const userExist = await authModel.findUserByUsername(username);
+      const userExist = await AuthModel.findUserByUsername(username);
 
       if (userExist) {
         res.json({ alert: "this user already exist" });
@@ -101,7 +101,7 @@ export class Auth {
           role,
         };
 
-        const newSeller = await authModel.createAdmin(admin);
+        const newSeller = await AuthModel.createAdmin(admin);
 
         res.json(newSeller);
       }
@@ -114,7 +114,7 @@ export class Auth {
     const { username, password } = req.body.credentials;
 
     try {
-      const user = await authModel.findUserByUsername(username);
+      const user = await AuthModel.findUserByUsername(username);
 
       if (user) {
         const token = jwt.sign(
@@ -170,6 +170,36 @@ export class Auth {
     }
   }
 
+  static async getSellers(req: any, res: any) {
+    try {
+      const sellers = await AuthModel.getAllSellers();
+
+      if (sellers) {
+        res.json(sellers);
+      } else {
+        res.json({ response: false });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Error interno del servidor" });
+    }
+  }
+
+  static async deleteSeller(req: any, res: any) {
+    try {
+      const sellers = await AuthModel.deleteSeller(Number(req.params.id));
+
+      if (sellers) {
+        res.json(sellers);
+      } else {
+        res.json({ response: false });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Error interno del servidor" });
+    }
+  }
+
   static async protected2(req: any, res: any) {
     try {
       console.log(req.cookies.access_token)
@@ -193,7 +223,7 @@ export class Auth {
     const { sellerId, clientId } = req.body;
 
     try {
-      const asignment = await authModel.assignSeller(clientId, sellerId);
+      const asignment = await AuthModel.assignSeller(clientId, sellerId);
       res.json(asignment);
     } catch (error) {
       console.error(error);

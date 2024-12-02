@@ -7,6 +7,10 @@ router.post("/register_client", Auth.registerClient);
 
 router.post("/register_seller", Auth.registerSeller);
 
+router.get("/get_sellers", Auth.getSellers);
+
+router.delete("/delete_seller/:id", Auth.deleteSeller);
+
 router.post("/register_admin", Auth.registerAdmin);
 
 router.post("/login/", Auth.login);

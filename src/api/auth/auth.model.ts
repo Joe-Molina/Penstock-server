@@ -20,9 +20,29 @@ interface Seller extends User {
   lastname: string;
 }
 
-export class authModel {
+export class AuthModel {
   static async findUserById(id: number) {
     const user = await prisma.user.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    return user;
+  }
+
+  static async getAllSellers() {
+    const user = await prisma.seller.findMany({
+      include: {
+        user: true
+      }
+    });
+
+    return user;
+  }
+
+  static async deleteSeller(id: number) {
+    const user = await prisma.seller.delete({
       where: {
         id,
       },
