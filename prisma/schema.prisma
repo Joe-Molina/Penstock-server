@@ -19,6 +19,7 @@ model User {
   password String
   email    String   @unique
   role     String
+  status   Boolean  @default(true)
   client   Client[]
   Seller   Seller[]
 }

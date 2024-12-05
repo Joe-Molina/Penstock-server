@@ -32,21 +32,171 @@ export class AuthModel {
   }
 
   static async getAllSellers() {
-    const user = await prisma.seller.findMany({
+    const ActivesUsers = await prisma.seller.findMany({
       include: {
         user: true
+      },
+      where: {
+        user: {
+          status: true
+        }
       }
     });
+
+    const InactiveUsers = await prisma.seller.findMany({
+      include: {
+        user: true
+      },
+      where: {
+        user: {
+          status: false
+        }
+      }
+    });
+
+    return { ActivesUsers, InactiveUsers };
+  }
+
+  static async getAllClients() {
+    const ActiveClients = await prisma.client.findMany({
+      include: {
+        user: true,
+        salesperson_assignment: {
+          include: {
+            seller: true
+          }
+        }
+      },
+      where: {
+        user: {
+          status: true
+        }
+      }
+    });
+
+    const InactiveClients = await prisma.client.findMany({
+      include: {
+        user: true,
+        salesperson_assignment: {
+          include: {
+            seller: true
+          }
+        }
+      },
+      where: {
+        user: {
+          status: false
+        }
+      }
+    });
+
+    return { ActiveClients, InactiveClients };
+  }
+
+  static async deleteSeller(id: number) {
+
+    const seller = await prisma.seller.findFirst({
+      where: {
+        id,
+      },
+      select: {
+        userId: true,
+      },
+    });
+
+    if (!seller) return;
+
+    const user = await prisma.user.update({
+      where: {
+        id: seller.userId,
+      },
+      data: {
+        status: false
+      },
+    });
+
+
 
     return user;
   }
 
-  static async deleteSeller(id: number) {
-    const user = await prisma.seller.delete({
+  static async RestoreSeller(id: number) {
+
+    const seller = await prisma.seller.findFirst({
       where: {
         id,
       },
+      select: {
+        userId: true,
+      },
     });
+
+    if (!seller) return;
+
+    const user = await prisma.user.update({
+      where: {
+        id: seller.userId,
+      },
+      data: {
+        status: true
+      },
+    });
+
+
+
+    return user;
+  }
+
+  static async deleteClient(id: number) {
+
+    const seller = await prisma.client.findFirst({
+      where: {
+        id,
+      },
+      select: {
+        userId: true,
+      },
+    });
+
+    if (!seller) return;
+
+    const user = await prisma.user.update({
+      where: {
+        id: seller.userId,
+      },
+      data: {
+        status: false
+      },
+    });
+
+
+
+    return user;
+  }
+
+  static async RestoreClient(id: number) {
+
+    const seller = await prisma.client.findFirst({
+      where: {
+        id,
+      },
+      select: {
+        userId: true,
+      },
+    });
+
+    if (!seller) return;
+
+    const user = await prisma.user.update({
+      where: {
+        id: seller.userId,
+      },
+      data: {
+        status: true
+      },
+    });
+
+
 
     return user;
   }
@@ -93,6 +243,7 @@ export class AuthModel {
         },
       },
     });
+
     return {
       username: newClient.username,
       email: newClient.email,

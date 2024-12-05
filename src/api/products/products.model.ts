@@ -43,4 +43,20 @@ export class productModel {
     return newCategory
   }
 
+  static async deleteCategory(id: number) {
+
+    const deletedCategory = await prisma.category.delete({
+      where: {
+        id
+      }
+    })
+    return deletedCategory
+  }
+
+  static async getCategorys() {
+
+    const Categorys = await prisma.category.findMany()
+    return Categorys
+  }
+
 }

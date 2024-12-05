@@ -40,4 +40,23 @@ export class products {
       res.json({ error: err })
     }
   }
+
+  static async deleteCategory(req: any, res: any) {
+
+    try {
+      const newCategory = await productModel.deleteCategory(req.params.id)
+      res.json(newCategory)
+    } catch (err) {
+      res.json({ error: err })
+    }
+  }
+
+  static async getCategorys(req: any, res: any) {
+    try {
+      const Categorys = await productModel.getCategorys()
+      res.json(Categorys)
+    } catch (err) {
+      res.json({ error: err })
+    }
+  }
 }
