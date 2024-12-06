@@ -4,6 +4,7 @@ import auth from "./api/auth/auth.routes";
 import products from "./api/products/products.routes";
 import cookieParser from "cookie-parser";
 import Orders from "./api/orders/orders.routes";
+import path from 'path';
 
 const corsOptions = {
   origin: "http://localhost:3001", // El dominio desde donde haces las solicitudes
@@ -20,6 +21,8 @@ app.use(cookieParser());
 app.use("/auth", auth);
 app.use("/products", products);
 app.use("/orders", Orders);
+
+app.use('/images', express.static(path.join(__dirname, '..', 'uploads')));
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

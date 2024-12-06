@@ -5,15 +5,19 @@ import { Product } from './types'
 
 export class productModel {
   static async getProducts() {
-    const products = await prisma.product.findMany()
+    const products = await prisma.product.findMany({
+      include: {
+        category: true
+      }
+    })
     return products
   }
 
 
-  static async getProductByIdModel({ id }: Product) {
+  static async getProductByIdModel(id: number) {
     const product: Product | null = await prisma.product.findFirst({
       where: {
-        id
+        id: Number(id)
       }
     })
     return product
@@ -24,10 +28,10 @@ export class productModel {
     const newProduct = await prisma.product.create({
       data: {
         name,
-        price,
+        price: Number(price),
         photo,
         description,
-        categoryId
+        categoryId: Number(categoryId)
       }
     })
     return newProduct
@@ -47,10 +51,20 @@ export class productModel {
 
     const deletedCategory = await prisma.category.delete({
       where: {
-        id
+        id: Number(id)
       }
     })
     return deletedCategory
+  }
+
+  static async deleteProduct(id: number) {
+
+    const deletedProduct = await prisma.product.delete({
+      where: {
+        id: Number(id)
+      }
+    })
+    return deletedProduct
   }
 
   static async getCategorys() {
