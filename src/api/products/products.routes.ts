@@ -5,10 +5,10 @@ import path from "path";
 
 const router = Router();
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination: function (_req, _file, cb) {
     cb(null, "uploads/");
   },
-  filename: function (req, file, cb) {
+  filename: function (_req, file, cb) {
     const extname = path.extname(file.originalname);
     cb(null, file.fieldname + "-" + Date.now() + extname);
   },
@@ -16,8 +16,9 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 router.get("/", products.getProducts);
-router.get("/:id", products.getProductById);
+router.get("/search/:id", products.getProductById);
 router.post("/create", products.createProduct);
+router.post("/update/:id", products.updateProductById);
 router.delete("/delete/:id", products.deleteProduct);
 
 router.get("/categorys", products.getCategorys);

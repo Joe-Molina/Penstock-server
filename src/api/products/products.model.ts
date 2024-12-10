@@ -18,7 +18,20 @@ export class productModel {
     const product: Product | null = await prisma.product.findFirst({
       where: {
         id: Number(id)
+      },
+      include: {
+        category: true
       }
+    })
+    return product
+  }
+
+  static async updateProductByIdModel(id: number, data: any) {
+    const product: Product | null = await prisma.product.update({
+      where: {
+        id: Number(id)
+      },
+      data
     })
     return product
   }
@@ -70,6 +83,7 @@ export class productModel {
   static async getCategorys() {
 
     const Categorys = await prisma.category.findMany()
+
     return Categorys
   }
 

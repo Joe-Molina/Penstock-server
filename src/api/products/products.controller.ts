@@ -21,6 +21,17 @@ export class products {
     }
   }
 
+  static async updateProductById(req: any, res: any) {
+    const { id } = req.params
+    const data = req.body.data
+    try {
+      const product = await productModel.updateProductByIdModel(id, data)
+      res.json(product)
+    } catch (err) {
+      res.json({ error: err })
+    }
+  }
+
   static async createProduct(req: any, res: any) {
     const { name, price, photo, description, categoryId } = req.body
 
@@ -89,6 +100,7 @@ export class products {
   static async getCategorys(req: any, res: any) {
     try {
       const Categorys = await productModel.getCategorys()
+      // res.json('hola')
       res.json(Categorys)
     } catch (err) {
       res.json({ error: err })
