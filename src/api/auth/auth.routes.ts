@@ -3,7 +3,7 @@ import { Auth } from "./auth.controller";
 
 const router = Router();
 
-router.post("/register_client", Auth.registerClient);
+router.post("/client/register", Auth.registerClient);
 
 router.post("/register_seller", Auth.registerSeller);
 
