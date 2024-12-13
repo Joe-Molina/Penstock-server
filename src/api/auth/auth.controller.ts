@@ -6,23 +6,28 @@ import { dataUser } from "../../services/dataUser";
 
 export class Auth {
   static async registerClient(req: any, res: any) {
+
+    console.log(req.body);
+
     const {
+      name,
+      lastname,
       username,
       email,
       password,
-      name,
-      lastname,
+      sellerId,
       store,
       address,
-      sellerId,
     } = req.body.credentials;
 
     try {
       // Verifica si el usuario ya existe
       const userExist = await AuthModel.findUserByUsername(username);
 
+      console.log(userExist)
+
       if (userExist) {
-        return res.status(400).json({ alert: "This user already exists" });
+        return res.status(400).json({ alert: "This user already exists", userExist });
       }
 
       // Hashea la contraseña
@@ -40,6 +45,8 @@ export class Auth {
         role: "client",
         sellerId: Number(sellerId),
       };
+
+      console.log(client)
 
       // Intenta registrar al cliente
       const newClient = await AuthModel.createClient(client);

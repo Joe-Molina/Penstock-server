@@ -80,11 +80,10 @@ export class Orders {
   }
 
   static async AdmincreateOrder(req: any, res: any) {
+    const { clientId, data } = req.body;
+
     try {
-      const order = await OrdersModel.createOrder(
-        req.body.clientId,
-        req.body.details
-      );
+      const order = await OrdersModel.createOrder(clientId, data);
       res.json(order);
     } catch (err) {
       res.json({ error: err });

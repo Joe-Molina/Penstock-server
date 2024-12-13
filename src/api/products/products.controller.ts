@@ -1,10 +1,19 @@
-import { productModel } from './products.model'
+import { ProductModel } from './products.model'
 
-export class products {
+export class Products {
 
   static async getProducts(_req: any, res: any) {
     try {
-      const products = await productModel.getProducts()
+      const products = await ProductModel.getProducts()
+      res.json(products)
+    } catch (err) {
+      res.json({ error: err })
+    }
+  }
+
+  static async getProductsByCategory(req: any, res: any) {
+    try {
+      const products = await ProductModel.getProductsByCategory(req.params.id)
       res.json(products)
     } catch (err) {
       res.json({ error: err })
@@ -14,7 +23,7 @@ export class products {
   static async getProductById(req: any, res: any) {
     const { id } = req.params
     try {
-      const Oneproduct = await productModel.getProductByIdModel(id)
+      const Oneproduct = await ProductModel.getProductByIdModel(id)
       res.json(Oneproduct)
     } catch (err) {
       res.json({ error: err })
@@ -25,7 +34,7 @@ export class products {
     const { id } = req.params
     const data = req.body.data
     try {
-      const product = await productModel.updateProductByIdModel(id, data)
+      const product = await ProductModel.updateProductByIdModel(id, data)
       res.json(product)
     } catch (err) {
       res.json({ error: err })
@@ -33,11 +42,11 @@ export class products {
   }
 
   static async createProduct(req: any, res: any) {
-    const { name, price, photo, description, categoryId } = req.body
+    const { name, price, photo, description, categoryId } = req.body.credentials
 
     console.log(name, price, photo, description, categoryId)
     try {
-      const newProduct = await productModel.createProduct({ name, price, photo, description, categoryId })
+      const newProduct = await ProductModel.createProduct({ name, price, photo, description, categoryId })
       console.log(newProduct)
       res.json(newProduct)
     } catch (err) {
@@ -48,7 +57,7 @@ export class products {
   static async createCategory(req: any, res: any) {
     const { name } = req.body
     try {
-      const newCategory = await productModel.createCategory(name)
+      const newCategory = await ProductModel.createCategory(name)
       res.json(newCategory)
     } catch (err) {
       res.json({ error: err })
@@ -61,7 +70,7 @@ export class products {
 
     try {
       // Aquí asumo que `deleteCategory` está esperando un número
-      const deletedCategory = await productModel.deleteCategory(id)
+      const deletedCategory = await ProductModel.deleteCategory(id)
 
       if (!deletedCategory) {
         return res.status(500).json({ error: "Error deleting category" })
@@ -77,7 +86,7 @@ export class products {
 
     const { id } = req.params
 
-    const ProductExist = await productModel.getProductByIdModel(id)
+    const ProductExist = await ProductModel.getProductByIdModel(id)
 
     if (!ProductExist) {
       return res.status(404).json({ error: "Product not found" })
@@ -85,7 +94,7 @@ export class products {
 
     try {
       // Aquí asumo que `deleteCategory` está esperando un número
-      const deletedProduct = await productModel.deleteProduct(id)
+      const deletedProduct = await ProductModel.deleteProduct(id)
 
       if (!deletedProduct) {
         return res.status(500).json({ error: "Error deleting Product" })
@@ -99,7 +108,7 @@ export class products {
 
   static async getCategorys(req: any, res: any) {
     try {
-      const Categorys = await productModel.getCategorys()
+      const Categorys = await ProductModel.getCategorys()
       // res.json('hola')
       res.json(Categorys)
     } catch (err) {

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { products } from "./products.controller";
+import { Products } from "./products.controller";
 import multer from "multer";
 import path from "path";
 
@@ -15,16 +15,17 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-router.get("/", products.getProducts);
-router.get("/search/:id", products.getProductById);
-router.post("/create", products.createProduct);
-router.post("/update/:id", products.updateProductById);
-router.delete("/delete/:id", products.deleteProduct);
+router.get("/", Products.getProducts);
+router.get("/get_by_category/:id", Products.getProductsByCategory);
+router.get("/search/:id", Products.getProductById);
+router.post("/create", Products.createProduct);
+router.post("/update/:id", Products.updateProductById);
+router.delete("/delete/:id", Products.deleteProduct);
 
-router.get("/categorys", products.getCategorys);
-router.post("/category/create", products.createCategory);
-router.delete("/category/delete/:id", products.deleteCategory);
+router.get("/categorys", Products.getCategorys);
+router.post("/category/create", Products.createCategory);
+router.delete("/category/delete/:id", Products.deleteCategory);
 
-router.post("/save/image", upload.single("file"), products.saveImage);
+router.post("/save/image", upload.single("file"), Products.saveImage);
 
 export default router;

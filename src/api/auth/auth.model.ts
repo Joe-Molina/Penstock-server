@@ -222,6 +222,19 @@ export class AuthModel {
     address,
     sellerId,
   }: Client) {
+
+    console.log({
+      username,
+      password,
+      email,
+      role,
+      name,
+      lastname,
+      store,
+      address,
+      sellerId,
+    })
+
     const newClient = await prisma.user.create({
       data: {
         username,

@@ -3,9 +3,21 @@ import { Product } from './types'
 
 
 
-export class productModel {
+export class ProductModel {
   static async getProducts() {
     const products = await prisma.product.findMany({
+      include: {
+        category: true
+      }
+    })
+    return products
+  }
+
+  static async getProductsByCategory(categoryId: number) {
+    const products = await prisma.product.findMany({
+      where: {
+        categoryId: Number(categoryId)
+      },
       include: {
         category: true
       }
