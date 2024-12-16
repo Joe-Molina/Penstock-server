@@ -142,7 +142,7 @@ export class Auth {
           },
           JWT_SECRET_KEY,
           {
-            expiresIn: "1h",
+            expiresIn: "7d",
           }
         );
         const matchPassword = bcrypt.compareSync(password, user.password);
