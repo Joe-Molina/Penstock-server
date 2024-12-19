@@ -5,6 +5,11 @@ export class OrdersModel {
     const orders = await prisma.order.findMany({
       include: {
         Order_Detail: true,
+        client: {
+          select: {
+            name: true
+          },
+        },
       },
     });
     return orders;
@@ -61,14 +66,14 @@ export class OrdersModel {
     return order;
   }
 
-  static async createOrder(clientId: number, data: any) {
+  static async createOrder(clientId: number, details: any) {
     const newOrder = await prisma.order.create({
       data: {
         clientId,
         revised: true,
         Order_Detail: {
           createMany: {
-            data,
+            data: details,
           },
         },
       },

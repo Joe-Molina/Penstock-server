@@ -82,8 +82,13 @@ export class Orders {
   static async AdmincreateOrder(req: any, res: any) {
     const { clientId, data } = req.body;
 
+    const data2 = data.map(({ productId, amount }: { productId: number, amount: number }) => {
+      return { productId, amount }
+    })
+
     try {
-      const order = await OrdersModel.createOrder(clientId, data);
+      const order = await OrdersModel.createOrder(clientId, data2);
+      console.log(order)
       res.json(order);
     } catch (err) {
       res.json({ error: err });
