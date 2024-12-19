@@ -22,7 +22,7 @@ app.use("/auth", auth);
 app.use("/products", products);
 app.use("/orders", Orders);
 
-app.use('/images', express.static(path.join(__dirname, '..', 'uploads')));
+app.use('/images', express.static(path.join(__dirname, '..', '..', 'uploads')));
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
