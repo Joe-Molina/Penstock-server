@@ -149,7 +149,6 @@ export class Auth {
         if (matchPassword) {
           res
             .cookie("access_token", token, {
-              domain: ".vercel.app",
               httpOnly: true,
               secure: true,
               sameSite: "None",
