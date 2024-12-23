@@ -1,7 +1,7 @@
 import { AuthModel } from "./auth.model";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { JWT_SECRET_KEY } from "../../../config";
+const JWT_SECRET_KEY = "el_mejor_secreto_del_mundo_mundiall"
 import { dataUser } from "../../services/dataUser";
 
 export class Auth {

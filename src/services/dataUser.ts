@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { JWT_SECRET_KEY } from "../../config";
+const JWT_SECRET_KEY = "el_mejor_secreto_del_mundo_mundiall"
 
 export const dataUser = (key: string) => {
   if (!key) {
