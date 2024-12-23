@@ -7,7 +7,7 @@ import Orders from "./api/orders/orders.routes";
 import path from 'path';
 
 const corsOptions = {
-  origin: ["http://localhost:3001", 'https://pedidos-client.vercel.app'],// El dominio desde donde haces las solicitudes
+  origin: ["http://localhost:3001", 'https://pedidos-client.vercel.app', 'https://pedidos-client-dni37cv5t-joemolinas-projects.vercel.app/'],// El dominio desde donde haces las solicitudes
   credentials: true, // Permite el envío de cookies
 };
 
