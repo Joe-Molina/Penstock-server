@@ -31,7 +31,7 @@ const app = express();
 app.use(express.json());
 // app.use(cors(corsOptions));
 app.use('*', cors({
-  origin: ["https://pedidos-client.vercel.app"], // Dominio del cliente
+  origin: ["https://pedidos-client.vercel.app", "http://localhost:3001/"], // Dominio del cliente
   methods: ["GET", "POST", "PUT", "DELETE"], // Métodos permitidos
   allowedHeaders: ["Content-Type", "Authorization"], // Encabezados permitidos
   credentials: true, // Permitir el envío de cookies
