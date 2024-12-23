@@ -5,7 +5,6 @@
 
 .env
 
-/dist
 
 # testing
 /coverage
