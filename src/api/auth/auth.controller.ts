@@ -149,7 +149,10 @@ export class Auth {
         if (matchPassword) {
           res
             .cookie("access_token", token, {
+              domain: ".vercel.app",
               httpOnly: true,
+              secure: true,
+              sameSite: "None",
               maxAge: 1000 * 60 * 60, // 1 hour
             })
             .json({ message: "cookie set", loged: true });
