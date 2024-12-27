@@ -27,16 +27,15 @@ import path from 'path';
 
 const PORT = process.env.PORT ?? 3000;
 const app = express();
-app.use(cors({
+app.use(express.json());
+app.use(cookieParser());
+app.use('*', cors({
   origin: ["http://localhost:3001", "https://pedidos-client.vercel.app"], // Dominio del cliente
   methods: ["GET", "POST", "PUT", "DELETE"], // Métodos permitidos
   allowedHeaders: ["Content-Type", "Authorization"], // Encabezados permitidos
   credentials: true, // Permitir el envío de cookies
 }));
 
-app.use(express.json());
-// app.use(cors(corsOptions));
-app.use(cookieParser());
 
 app.use("/auth", auth);
 app.use("/products", products);
