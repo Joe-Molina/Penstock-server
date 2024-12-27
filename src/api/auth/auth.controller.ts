@@ -145,16 +145,29 @@ export class Auth {
             expiresIn: "7d",
           }
         );
+
+        req.session.user = {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          role: user.role,
+          loged: true,
+        };
+
+        console.log('namae')
+        console.log(req.session.user?.username)
+
         const matchPassword = bcrypt.compareSync(password, user.password);
         if (matchPassword) {
           res
             .cookie("access_token", token, {
               httpOnly: true,
               secure: true,
-              sameSite: "None",
+              sameSite: 'none',
               maxAge: 1000 * 60 * 60, // 1 hour
             })
-            .json({ message: "cookie set", loged: true });
+            .json({ message: "cookie set", loged: true, token });
+
         } else {
           res.json({ message: "incorrect password", loged: false });
         }
@@ -167,19 +180,21 @@ export class Auth {
     }
   }
 
-  static async logout(_req: any, res: any) {
-    res.clearCookie("access_token");
-    res.send("coockie is cleared correctly");
+  static async logout(req: any, res: any) {
+    req.session.destroy((err: any) => {
+      if (err) {
+        return res.status(500).json({ message: 'Error al cerrar sesión' });
+      }
+      res.clearCookie('connect.sid'); // Limpia la cookie de sesión
+      res.json({ message: 'Sesión cerrada exitosamente' });
+    });
   }
 
   static async protected(req: any, res: any) {
     try {
-      const response = dataUser(req.body.key);
-
-      if (response) {
+      if (req.cookies['acess_token']) {
+        const response = dataUser(req.cookies['acess_token']);
         res.json(response);
-      } else {
-        res.json({ response: false });
       }
     } catch (error) {
       console.error(error);
@@ -275,10 +290,13 @@ export class Auth {
 
   static async protected2(req: any, res: any) {
     try {
+
+      console.log('hola')
+
       console.log(req.cookies.access_token)
 
-      const data = dataUser(req.cookies.access_token);
       // const data = dataUser(req.cookies.access_token);
+      const data = dataUser(req.cookies.access_token);
       console.log(data)
 
       if (data) {
