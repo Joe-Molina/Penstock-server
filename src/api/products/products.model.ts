@@ -64,11 +64,16 @@ export class ProductModel {
 
   static async createCategory(name: string) {
 
+    console.log(name)
+
     const newCategory = await prisma.category.create({
       data: {
         name
       }
     })
+
+    console.log(newCategory)
+
     return newCategory
   }
 

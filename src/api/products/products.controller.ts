@@ -45,6 +45,7 @@ export class Products {
     const { name, price, photo, description, categoryId } = req.body.credentials
 
     console.log(name, price, photo, description, categoryId)
+    
     try {
       const newProduct = await ProductModel.createProduct({ name, price, photo, description, categoryId })
       console.log(newProduct)
@@ -55,8 +56,10 @@ export class Products {
   }
 
   static async createCategory(req: any, res: any) {
-    const { name } = req.body
     try {
+    const { name } = req.body.credentials
+
+    console.log(req.body)
       const newCategory = await ProductModel.createCategory(name)
       res.json(newCategory)
     } catch (err) {
