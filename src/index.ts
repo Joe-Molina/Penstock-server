@@ -58,7 +58,8 @@ app.get('/pruebacookie', (_req, res) => {
     maxAge: 60 * 60 * 24 * 7, // La cookie expirará en 1 semana
     path: '/',
     domain: 'localhost',
-    sameSite: 'none'               // La cookie es válida para todas las rutas
+    sameSite: 'none',
+    partitioned: true,               // La cookie es válida para todas las rutas
 
   });
 
