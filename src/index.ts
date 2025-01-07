@@ -57,6 +57,7 @@ app.get('/pruebacookie', (_req, res) => {
     secure: process.env.NODE_ENV === 'production', // En producción, la cookie solo se envía a través de HTTPS
     maxAge: 60 * 60 * 24 * 7, // La cookie expirará en 1 semana
     path: '/',
+    domain: 'localhost',
     sameSite: 'none'               // La cookie es válida para todas las rutas
 
   });
