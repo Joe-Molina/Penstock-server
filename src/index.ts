@@ -18,7 +18,7 @@ const PORT = process.env.PORT ?? 3000;
 const app = express();
 app.use(express.json());
 app.use(cors({
-  origin: ["http://localhost:3001", "https://pedidos-client.vercel.app"], // Dominio del cliente
+  origin: 'https://penstock.jodomodev.com', // Dominio del cliente
   credentials: true, // Permitir el envío de cookies
 }));
 app.use(cookieParser());
