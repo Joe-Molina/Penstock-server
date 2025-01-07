@@ -56,7 +56,7 @@ app.get('/pruebacookie', (_req, res) => {
   // Configurar la cookie HttpOnly
   res.cookie('authToken', token, {
     httpOnly: true,           // Hace que la cookie no sea accesible desde JavaScript
-    // secure: process.env.NODE_ENV === 'production', // En producción, la cookie solo se envía a través de HTTPS
+    secure: process.env.NODE_ENV === 'production', // En producción, la cookie solo se envía a través de HTTPS
     maxAge: 60 * 60 * 24 * 7, // La cookie expirará en 1 semana
     path: '/',
     sameSite: 'none'               // La cookie es válida para todas las rutas
