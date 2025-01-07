@@ -49,6 +49,31 @@ app.use("/auth", auth);
 app.use("/products", products);
 app.use("/orders", Orders);
 
+app.get('/pruebacookie', (_req, res) => {
+  // Supongamos que el usuario se ha autenticado correctamente.
+  const token = 'mi-token-jwt'; // Ejemplo de un token que podrías generar
+
+  // Configurar la cookie HttpOnly
+  res.cookie('authToken', token, {
+    httpOnly: true,           // Hace que la cookie no sea accesible desde JavaScript
+    // secure: process.env.NODE_ENV === 'production', // En producción, la cookie solo se envía a través de HTTPS
+    maxAge: 60 * 60 * 24 * 7, // La cookie expirará en 1 semana
+    path: '/',
+    sameSite: 'none'               // La cookie es válida para todas las rutas
+  });
+
+  // Enviar una respuesta al cliente
+  res.status(200).json({ message: 'Login exitoso, cookie configurada' });
+});
+
+app.get('/gettoken', (req, res) => {
+  // Verificar si la cookie 'authToken' está presente
+  const token = req.cookies.authToken;
+
+  // Si la cookie está presente, responder con el contenido protegido
+  res.status(200).json({ message: 'Contenido protegido', token });
+});
+
 app.use('/images', express.static(path.join(__dirname, '..', 'uploads')));
 
 app.listen(PORT, () => {
