@@ -24,9 +24,7 @@ router.post("/login/", Auth.login);
 
 router.get("/logout", Auth.logout);
 
-router.post("/protected", Auth.protected);
-
-router.get("/protected2", Auth.protected2);
+router.get("/user_info", Auth.userInfo);
 
 router.post("/seller_assigment", Auth.assignSeller);
 

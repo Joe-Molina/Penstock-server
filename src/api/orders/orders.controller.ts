@@ -1,4 +1,4 @@
-import { dataUser } from "../../services/dataUser";
+import { jwtVerify } from "../../services/dataUser";
 import { OrdersModel } from "./orders.model";
 
 interface User {
@@ -19,7 +19,7 @@ export class Orders {
   }
 
   static async getAllClientOrdersBySeller(req: any, res: any) {
-    const data: User | false = dataUser(req.cookies.access_token);
+    const data: User | false = jwtVerify(req.cookies.access_token);
 
     if (data != false) {
       if (data.role == "admin") {
@@ -47,7 +47,7 @@ export class Orders {
   }
 
   static async getClientOrdersByClient(req: any, res: any) {
-    const data: User | false = dataUser(req.cookies.access_token);
+    const data: User | false = jwtVerify(req.cookies.access_token);
     try {
       if (data != false) {
         const orders = await OrdersModel.getOrdersByClientId(data.id);
@@ -65,7 +65,7 @@ export class Orders {
   }
 
   static async ClientcreateOrder(req: any, res: any) {
-    const data: User | false = dataUser(req.cookies.access_token);
+    const data: User | false = jwtVerify(req.cookies.access_token);
     try {
       if (data != false) {
         const order = await OrdersModel.createOrder(data.id, req.body.details);

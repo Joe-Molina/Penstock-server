@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 const JWT_SECRET_KEY = "el_mejor_secreto_del_mundo_mundiall"
 
-export const dataUser = (key: string) => {
+export const jwtVerify = (key: string) => {
   if (!key) {
     return false;
   } else {
@@ -10,6 +10,7 @@ export const dataUser = (key: string) => {
       username: string;
       email: string;
       role: string;
+      loged: boolean;
     };
     return user;
   }

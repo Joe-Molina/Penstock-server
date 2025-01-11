@@ -2,9 +2,84 @@ import { AuthModel } from "./auth.model";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 const JWT_SECRET_KEY = "el_mejor_secreto_del_mundo_mundiall"
-import { dataUser } from "../../services/dataUser";
+import { jwtVerify } from "../../services/dataUser";
 
 export class Auth {
+
+
+  static async login(req: any, res: any) {
+    const { username, password } = req.body.credentials;
+
+    try {
+      const user = await AuthModel.findUserByUsername(username);
+
+      if (user) {
+        const token = jwt.sign(
+          {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            role: user.role,
+            loged: true,
+          },
+          JWT_SECRET_KEY,
+          {
+            expiresIn: "8h",
+          }
+        );
+
+        const matchPassword = bcrypt.compareSync(password, user.password);
+        if (matchPassword) {
+          res
+            .cookie("access_token", token, {
+              httpOnly: true,
+              secure: true,
+              sameSite: 'none',
+              maxAge: 1000 * 60 * 60, // 1 hour
+            })
+            .json({ message: "cookie set", loged: true, token });
+
+        } else {
+          res.json({ message: "incorrect password", loged: false });
+        }
+      } else {
+        console.log("user not found");
+        res.json({ message: "user not found", loged: false });
+      }
+    } catch (error) {
+      res.json(error);
+    }
+  }
+
+  static async logout(req: any, res: any) {
+    res.clearCookie('access_token').json({ message: 'Sesión cerrada exitosamente' });
+    ;
+  }
+
+  static async userInfo(req: any, res: any) {
+
+    const token = req.cookies['access_token'];
+
+    console.log(token)
+
+    try {
+      if (token != undefined) {
+        const response = jwtVerify(token);
+
+        if(response && response.loged){ 
+          return res.json({ user: true });
+        }
+
+        res.json({ user: false });
+      } else {
+        res.json({ user: false });
+      }
+    } catch (error) {
+      console.error(error);
+      res.json({ user: false }).status(500);
+    }
+  }
+
   static async registerClient(req: any, res: any) {
 
     console.log(req.body);
@@ -125,83 +200,6 @@ export class Auth {
     }
   }
 
-  static async login(req: any, res: any) {
-    const { username, password } = req.body.credentials;
-
-    try {
-      const user = await AuthModel.findUserByUsername(username);
-
-      if (user) {
-        const token = jwt.sign(
-          {
-            id: user.id,
-            username: user.username,
-            email: user.email,
-            role: user.role,
-            loged: true,
-          },
-          JWT_SECRET_KEY,
-          {
-            expiresIn: "7d",
-          }
-        );
-
-        req.session.user = {
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          role: user.role,
-          loged: true,
-        };
-
-        console.log('namae')
-        console.log(req.session.user?.username)
-
-        const matchPassword = bcrypt.compareSync(password, user.password);
-        if (matchPassword) {
-          res
-            .cookie("access_token", token, {
-              httpOnly: true,
-              secure: true,
-              sameSite: 'none',
-              maxAge: 1000 * 60 * 60, // 1 hour
-            })
-            .json({ message: "cookie set", loged: true, token });
-
-        } else {
-          res.json({ message: "incorrect password", loged: false });
-        }
-      } else {
-        console.log(" no hay user");
-        res.json({ message: "user not found", loged: false });
-      }
-    } catch (error) {
-      res.json(error);
-    }
-  }
-
-  static async logout(req: any, res: any) {
-    req.session.destroy((err: any) => {
-      if (err) {
-        return res.status(500).json({ message: 'Error al cerrar sesión' });
-      }
-      res.clearCookie('connect.sid'); // Limpia la cookie de sesión
-      res.json({ message: 'Sesión cerrada exitosamente' });
-    });
-  }
-
-  static async protected(req: any, res: any) {
-    try {
-      if (req.cookies['acess_token']) {
-        const response = dataUser(req.cookies['acess_token']);
-        res.json(response);
-      }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Error interno del servidor" });
-    }
-  }
-
   static async getSellers(req: any, res: any) {
     try {
       const sellers = await AuthModel.getAllSellers();
@@ -282,28 +280,6 @@ export class Auth {
         res.json(client);
       }
 
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Error interno del servidor" });
-    }
-  }
-
-  static async protected2(req: any, res: any) {
-    try {
-
-      console.log('hola')
-
-      console.log(req.cookies.access_token)
-
-      // const data = dataUser(req.cookies.access_token);
-      const data = dataUser(req.cookies.access_token);
-      console.log(data)
-
-      if (data) {
-        res.json(data);
-      } else {
-        res.json({ response: false });
-      }
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Error interno del servidor" });
