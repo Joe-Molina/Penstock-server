@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 const JWT_SECRET_KEY = "el_mejor_secreto_del_mundo_mundiall"
 import { jwtVerify } from "../../services/dataUser";
+import { PAHTS_API } from "../../services/pahts";
 
 export class Auth {
 
@@ -67,7 +68,39 @@ export class Auth {
         const response = jwtVerify(token);
 
         if(response && response.loged){ 
-          return res.json({ user: true });
+          return res.json({ user: true, username: response.username, role: response.role, email: response.email });
+        }
+
+        res.json({ user: false });
+      } else {
+        res.json({ user: false });
+      }
+    } catch (error) {
+      console.error(error);
+      res.json({ user: false }).status(500);
+    }
+  }
+
+  static async NavInfo(req: any, res: any) {
+
+    const token = req.cookies['access_token'];
+
+    console.log(token)
+
+    try {
+      if (token != undefined) {
+        const response = jwtVerify(token);
+
+        if(response && response.role === 'client'){ 
+          return res.json(PAHTS_API.navClient);
+        }
+
+        if(response && response.role === 'seller'){ 
+          return res.json(PAHTS_API.navSeller);
+        }
+
+        if(response && response.role === 'admin'){ 
+          return res.json( PAHTS_API.navAdmin);
         }
 
         res.json({ user: false });
