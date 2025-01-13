@@ -38,6 +38,16 @@ export class ProductModel {
     return product
   }
 
+  static async getOrderProduct(id: number) {
+
+    const orderExist = await prisma.order_Detail.findFirst({
+      where: {
+        productId: Number(id)
+      }
+    })
+    return orderExist
+  }
+
   static async updateProductByIdModel(id: number, data: any) {
     const product: Product | null = await prisma.product.update({
       where: {
@@ -89,11 +99,16 @@ export class ProductModel {
 
   static async deleteProduct(id: number) {
 
+    console.log(id)
+
     const deletedProduct = await prisma.product.delete({
       where: {
         id: Number(id)
       }
     })
+
+    console.log(deletedProduct)
+
     return deletedProduct
   }
 

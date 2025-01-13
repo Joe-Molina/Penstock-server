@@ -71,9 +71,13 @@ export class Products {
 
     const { id } = req.params
 
+    console.log(id)
+
     try {
       // Aquí asumo que `deleteCategory` está esperando un número
       const deletedCategory = await ProductModel.deleteCategory(id)
+
+      console.log(deletedCategory)
 
       if (!deletedCategory) {
         return res.status(500).json({ error: "Error deleting category" })
@@ -89,15 +93,26 @@ export class Products {
 
     const { id } = req.params
 
+    try {
     const ProductExist = await ProductModel.getProductByIdModel(id)
 
     if (!ProductExist) {
       return res.status(404).json({ error: "Product not found" })
     }
 
-    try {
-      // Aquí asumo que `deleteCategory` está esperando un número
+    const OrderExist = await ProductModel.getOrderProduct(id)
+
+    console.log(OrderExist)
+
+    if (OrderExist) {
+      return res.status(200).json({ orderExist: "Hay un pedido con este producto" })
+    }
+
+      console.log(id)
+
       const deletedProduct = await ProductModel.deleteProduct(id)
+
+      console.log(deletedProduct)
 
       if (!deletedProduct) {
         return res.status(500).json({ error: "Error deleting Product" })
