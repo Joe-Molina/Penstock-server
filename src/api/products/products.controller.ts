@@ -45,7 +45,7 @@ export class Products {
     const { name, price, photo, description, categoryId } = req.body.credentials
 
     console.log(name, price, photo, description, categoryId)
-    
+
     try {
       const newProduct = await ProductModel.createProduct({ name, price, photo, description, categoryId })
       console.log(newProduct)
@@ -57,9 +57,9 @@ export class Products {
 
   static async createCategory(req: any, res: any) {
     try {
-    const { name } = req.body.credentials
+      const { name } = req.body
 
-    console.log(req.body)
+      console.log(req.body)
       const newCategory = await ProductModel.createCategory(name)
       res.json(newCategory)
     } catch (err) {
@@ -94,19 +94,19 @@ export class Products {
     const { id } = req.params
 
     try {
-    const ProductExist = await ProductModel.getProductByIdModel(id)
+      const ProductExist = await ProductModel.getProductByIdModel(id)
 
-    if (!ProductExist) {
-      return res.status(404).json({ error: "Product not found" })
-    }
+      if (!ProductExist) {
+        return res.status(404).json({ error: "Product not found" })
+      }
 
-    const OrderExist = await ProductModel.getOrderProduct(id)
+      const OrderExist = await ProductModel.getOrderProduct(id)
 
-    console.log(OrderExist)
+      console.log(OrderExist)
 
-    if (OrderExist) {
-      return res.status(200).json({ orderExist: "Hay un pedido con este producto" })
-    }
+      if (OrderExist) {
+        return res.status(200).json({ orderExist: "Hay un pedido con este producto" })
+      }
 
       console.log(id)
 

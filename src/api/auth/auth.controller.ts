@@ -67,7 +67,7 @@ export class Auth {
       if (token != undefined) {
         const response = jwtVerify(token);
 
-        if(response && response.loged){ 
+        if (response && response.loged) {
           return res.json({ user: true, username: response.username, role: response.role, email: response.email });
         }
 
@@ -91,16 +91,16 @@ export class Auth {
       if (token != undefined) {
         const response = jwtVerify(token);
 
-        if(response && response.role === 'client'){ 
+        if (response && response.role === 'client') {
           return res.json(PAHTS_API.navClient);
         }
 
-        if(response && response.role === 'seller'){ 
+        if (response && response.role === 'seller') {
           return res.json(PAHTS_API.navSeller);
         }
 
-        if(response && response.role === 'admin'){ 
-          return res.json( PAHTS_API.navAdmin);
+        if (response && response.role === 'admin') {
+          return res.json(PAHTS_API.navAdmin);
         }
 
         res.json({ user: false });
@@ -268,9 +268,11 @@ export class Auth {
       const sellers = await AuthModel.deleteSeller(Number(req.params.id));
 
       if (sellers) {
+        console.log(sellers)
         res.json(sellers);
       }
 
+      // res.status(404).json({ error: 'a problem has ocurred' })
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Error interno del servidor" });

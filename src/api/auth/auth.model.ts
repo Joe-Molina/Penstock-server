@@ -32,33 +32,27 @@ export class AuthModel {
   }
 
   static async getAllSellers() {
-    const ActivesUsers = await prisma.seller.findMany({
+    const sellersDb = await prisma.seller.findMany({
       include: {
         user: true
-      },
-      where: {
-        user: {
-          status: true
-        }
       }
     });
 
-    const InactiveUsers = await prisma.seller.findMany({
-      include: {
-        user: true
-      },
-      where: {
-        user: {
-          status: false
-        }
+    const Sellers = sellersDb.map((seller) => {
+      return {
+        id: seller.id,
+        name: seller.name,
+        lastname: seller.lastname,
+        isActive: seller.user.status
       }
-    });
+    })
 
-    return { ActivesUsers, InactiveUsers };
+
+    return { Sellers };
   }
 
   static async getAllClients() {
-    const ActiveClients = await prisma.client.findMany({
+    const ClientsDb = await prisma.client.findMany({
       include: {
         user: true,
         salesperson_assignment: {
@@ -66,31 +60,27 @@ export class AuthModel {
             seller: true
           }
         }
-      },
-      where: {
-        user: {
-          status: true
-        }
       }
     });
 
-    const InactiveClients = await prisma.client.findMany({
-      include: {
-        user: true,
-        salesperson_assignment: {
-          include: {
-            seller: true
-          }
-        }
-      },
-      where: {
-        user: {
-          status: false
+
+    const Clients = ClientsDb.map((client) => {
+      return {
+        address: client.address,
+        id: client.id,
+        name: client.name,
+        lastname: client.lastname,
+        store: client.store,
+        isActive: client.user.status,
+        seller: {
+          id: client.salesperson_assignment[0].sellerId,
+          name: client.salesperson_assignment[0].seller.name,
+          lastname: client.salesperson_assignment[0].seller.lastname
         }
       }
-    });
+    })
 
-    return { ActiveClients, InactiveClients };
+    return { Clients };
   }
 
   static async deleteSeller(id: number) {
@@ -104,7 +94,7 @@ export class AuthModel {
       },
     });
 
-    if (!seller) return;
+    if (!seller) return console.log('no seller');
 
     const user = await prisma.user.update({
       where: {
