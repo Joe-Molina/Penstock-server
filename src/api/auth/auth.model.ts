@@ -5,6 +5,7 @@ interface User {
   password: string;
   email: string;
   role: string;
+  companyId: number;
 }
 
 interface Client extends User {
@@ -13,6 +14,7 @@ interface Client extends User {
   store: string;
   address: string;
   sellerId: number;
+  companyId: number;
 }
 
 interface Seller extends User {
@@ -211,19 +213,8 @@ export class AuthModel {
     store,
     address,
     sellerId,
+    companyId
   }: Client) {
-
-    console.log({
-      username,
-      password,
-      email,
-      role,
-      name,
-      lastname,
-      store,
-      address,
-      sellerId,
-    })
 
     const newClient = await prisma.user.create({
       data: {
@@ -231,6 +222,7 @@ export class AuthModel {
         password,
         email,
         role,
+        companyId,
         client: {
           create: {
             name,
@@ -260,13 +252,16 @@ export class AuthModel {
     name,
     role,
     lastname,
+    companyId
   }: Seller) {
-    const newClient = await prisma.user.create({
+
+    const NewSeller = await prisma.user.create({
       data: {
         username,
         password,
         email,
         role,
+        companyId,
         Seller: {
           create: {
             name,
@@ -276,19 +271,39 @@ export class AuthModel {
       },
     });
 
-    return {
-      username: newClient.username,
-      email: newClient.email,
-    };
+    const seller = await prisma.seller.findFirst({
+      where: {
+        id: NewSeller.id
+      },
+      include: {
+        user: true
+      }
+    })
+
+    if (seller) {
+      return {
+        id: seller.id,
+        name: seller.name,
+        lastname: seller.lastname,
+        isActive: seller.user.status
+      };
+    } else {
+      return false
+    }
+
   }
 
-  static async createAdmin({ username, password, email, role }: User) {
+  static async createAdmin({ username, password, email, role, company }: { username: string, password: string, email: string, role: string, company: string }) {
+
     const newUser = await prisma.user.create({
       data: {
         username,
         password,
         email,
         role,
+        Company: {
+          create: { name: company }
+        }
       },
     });
 

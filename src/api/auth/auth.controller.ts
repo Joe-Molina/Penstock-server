@@ -22,6 +22,7 @@ export class Auth {
             email: user.email,
             role: user.role,
             loged: true,
+            companyId: user.companyId
           },
           JWT_SECRET_KEY,
           {
@@ -138,33 +139,44 @@ export class Auth {
         return res.status(400).json({ alert: "This user already exists", userExist });
       }
 
-      // Hashea la contraseña
-      const hashedPassword = await bcrypt.hash(password, 10);
 
-      // Crea un objeto cliente
-      const client = {
-        username,
-        password: hashedPassword,
-        email,
-        name,
-        lastname,
-        store,
-        address,
-        role: "client",
-        sellerId: Number(sellerId),
-      };
+      const token = req.cookies['access_token']
+      const user = jwtVerify(token)
 
-      console.log(client)
+      if (user) {
 
-      // Intenta registrar al cliente
-      const newClient = await AuthModel.createClient(client);
+        // Hashea la contraseña
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-      if (!newClient) {
-        return res.status(500).json({ error: "Error registering client" });
+        // Crea un objeto cliente
+        const client = {
+          username,
+          password: hashedPassword,
+          email,
+          name,
+          lastname,
+          store,
+          address,
+          role: "client",
+          sellerId: Number(sellerId),
+          companyId: user.companyId
+        };
+
+        console.log(client)
+
+        // Intenta registrar al cliente
+        const newClient = await AuthModel.createClient(client);
+
+        if (!newClient) {
+          return res.status(500).json({ error: "Error registering client" });
+        }
+
+        // Responde con el cliente registrado
+        return res.status(201).json(newClient);
+      } else {
+        res.json({ error: "no estas logeado" });
       }
 
-      // Responde con el cliente registrado
-      return res.status(201).json(newClient);
     } catch (err: any) {
       console.error("Error during client registration:", err);
       return res.status(500).json({ error: "Internal Server Error", details: err.message });
@@ -173,6 +185,9 @@ export class Auth {
 
   static async registerSeller(req: any, res: any) {
     const { username, email, password, name, lastname } = req.body.credentials;
+
+    const token = req.cookies['access_token']
+    const user = jwtVerify(token)
 
     try {
       const userExist = await AuthModel.findUserByUsername(username);
@@ -184,30 +199,31 @@ export class Auth {
       }
       const hashedPassword = bcrypt.hashSync(password, 10);
 
-      const client = {
-        username,
-        password: hashedPassword,
-        email,
-        name,
-        role: "seller",
-        lastname,
-      };
-
-      const newSeller = await AuthModel.createSeller(client);
-
-      if (!newSeller) {
-        return res.status(500).json({ error: "Error registering client" });
+      if (user) {
+        const client = {
+          username,
+          password: hashedPassword,
+          email,
+          name,
+          role: "seller",
+          lastname,
+          companyId: user.companyId
+        };
+        const newSeller = await AuthModel.createSeller(client);
+        if (!newSeller) {
+          return res.status(500).json({ error: "Error registering client" });
+        }
+        res.json(newSeller);
       }
-
-      res.json(newSeller);
-
     } catch (err) {
       res.json({ error: err });
     }
   }
 
   static async registerAdmin(req: any, res: any) {
-    const { username, email, password, role } = req.body;
+    const { username, email, password, role, company } = req.body
+
+    console.log(req.body)
 
     try {
       const userExist = await AuthModel.findUserByUsername(username);
@@ -222,6 +238,7 @@ export class Auth {
           password: hashedPassword,
           email,
           role,
+          company
         };
 
         const newSeller = await AuthModel.createAdmin(admin);
