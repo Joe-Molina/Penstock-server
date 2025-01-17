@@ -33,8 +33,13 @@ export class AuthModel {
     return user;
   }
 
-  static async getAllSellers() {
+  static async getAllSellers(companyId: number) {
     const sellersDb = await prisma.seller.findMany({
+     where: {
+      user: {
+        companyId
+      }
+     } ,
       include: {
         user: true
       }
@@ -216,7 +221,7 @@ export class AuthModel {
     companyId
   }: Client) {
 
-    const newClient = await prisma.user.create({
+    const client = await prisma.user.create({
       data: {
         username,
         password,
@@ -237,13 +242,34 @@ export class AuthModel {
           },
         },
       },
+      include:{
+        Seller: true,
+        client: {
+          include: {
+            salesperson_assignment: {
+              include: {
+                seller: true
+              }
+            }
+          }
+        }
+        
+      }
     });
-
-    return {
-      username: newClient.username,
-      email: newClient.email,
-    };
+  return {
+      address: client.client[0].address,
+      id: client.id,
+      name: client.client[0].name,
+      lastname: client.client[0].lastname,
+      store: client.client[0].store,
+      isActive: client.status,
+      seller: {
+        id: client.client[0].salesperson_assignment[0].sellerId,
+        name: client.client[0].salesperson_assignment[0].seller.name,
+        lastname: client.client[0].salesperson_assignment[0].seller.lastname
+        }
   }
+}
 
   static async createSeller({
     username,
@@ -255,7 +281,10 @@ export class AuthModel {
     companyId
   }: Seller) {
 
-    const NewSeller = await prisma.user.create({
+    const newSeller = await prisma.user.create({
+      include: {
+        Seller: true
+      },
       data: {
         username,
         password,
@@ -271,21 +300,12 @@ export class AuthModel {
       },
     });
 
-    const seller = await prisma.seller.findFirst({
-      where: {
-        id: NewSeller.id
-      },
-      include: {
-        user: true
-      }
-    })
-
-    if (seller) {
+    if (newSeller) {
       return {
-        id: seller.id,
-        name: seller.name,
-        lastname: seller.lastname,
-        isActive: seller.user.status
+        id: newSeller.Seller[0].id,
+        name: newSeller.Seller[0].name,
+        lastname: newSeller.Seller[0].lastname,
+        isActive: newSeller.status
       };
     } else {
       return false

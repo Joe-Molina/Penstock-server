@@ -19,14 +19,6 @@ app.use("/auth", auth);
 app.use("/products", products);
 app.use("/orders", Orders);
 
-app.get('/gettoken', (req, res) => {
-  // Verificar si la cookie 'authToken' está presente
-  const token = req.cookies.authToken;
-
-  // Si la cookie está presente, responder con el contenido protegido
-  res.status(200).json({ message: 'Contenido protegido', token });
-});
-
 app.use('/images', express.static(path.join(__dirname, '..', 'uploads')));
 
 app.listen(PORT, () => {

@@ -132,9 +132,6 @@ export class Auth {
     try {
       // Verifica si el usuario ya existe
       const userExist = await AuthModel.findUserByUsername(username);
-
-      console.log(userExist)
-
       if (userExist) {
         return res.status(400).json({ alert: "This user already exists", userExist });
       }
@@ -162,8 +159,6 @@ export class Auth {
           companyId: user.companyId
         };
 
-        console.log(client)
-
         // Intenta registrar al cliente
         const newClient = await AuthModel.createClient(client);
 
@@ -190,17 +185,15 @@ export class Auth {
     const user = jwtVerify(token)
 
     try {
+
       const userExist = await AuthModel.findUserByUsername(username);
-
-      console.log(userExist)
-
       if (userExist) {
         return res.status(400).json({ alert: "This user already exists" });
       }
       const hashedPassword = bcrypt.hashSync(password, 10);
 
       if (user) {
-        const client = {
+        const seller = {
           username,
           password: hashedPassword,
           email,
@@ -209,7 +202,8 @@ export class Auth {
           lastname,
           companyId: user.companyId
         };
-        const newSeller = await AuthModel.createSeller(client);
+        const newSeller = await AuthModel.createSeller(seller);
+        
         if (!newSeller) {
           return res.status(500).json({ error: "Error registering client" });
         }
@@ -251,13 +245,20 @@ export class Auth {
   }
 
   static async getSellers(req: any, res: any) {
-    try {
-      const sellers = await AuthModel.getAllSellers();
 
-      if (sellers) {
-        res.json(sellers);
-      } else {
-        res.json({ response: false });
+    const token = req.cookies['access_token']
+    const user = jwtVerify(token)
+
+
+    try {
+      if(user){
+        const sellers = await AuthModel.getAllSellers(user.companyId);
+
+        if (sellers) {
+          res.json(sellers);
+        } else {
+          res.json({ response: false });
+        }
       }
     } catch (error) {
       console.error(error);
