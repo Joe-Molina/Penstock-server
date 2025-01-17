@@ -5,4 +5,5 @@ export interface Product {
   photo: string
   description: string
   categoryId: number
+  companyId: number
 }

@@ -27,7 +27,7 @@ export class ProductModel {
 
 
   static async getProductByIdModel(id: number) {
-    const product: Product | null = await prisma.product.findFirst({
+    const product = await prisma.product.findFirst({
       where: {
         id: Number(id)
       },
@@ -49,7 +49,7 @@ export class ProductModel {
   }
 
   static async updateProductByIdModel(id: number, data: any) {
-    const product: Product | null = await prisma.product.update({
+    const product = await prisma.product.update({
       where: {
         id: Number(id)
       },
@@ -58,7 +58,7 @@ export class ProductModel {
     return product
   }
 
-  static async createProduct({ name, price, photo, description, categoryId }: Product) {
+  static async createProduct({ name, price, photo, description, categoryId, companyId }: Product) {
 
     const newProduct = await prisma.product.create({
       data: {
@@ -66,22 +66,26 @@ export class ProductModel {
         price: Number(price),
         photo,
         description,
-        categoryId: Number(categoryId)
+        categoryId: Number(categoryId),
+        companyId
+      },
+      include: {
+        category: true
       }
     })
     return newProduct
   }
 
-  static async createCategory(name: string) {
-
-    console.log(name)
+  static async createCategory({ name, companyId }: { name: string, companyId: number }) {
 
     const newCategory = await prisma.category.create({
       data: {
-        name
+        name,
+        companyId
       }
     })
 
+    console.log("nueva categoria")
     console.log(newCategory)
 
     return newCategory
@@ -112,9 +116,13 @@ export class ProductModel {
     return deletedProduct
   }
 
-  static async getCategorys() {
+  static async getCategorys({ companyId }: { companyId: number }) {
 
-    const Categorys = await prisma.category.findMany()
+    const Categorys = await prisma.category.findMany({
+      where: {
+        companyId
+      }
+    })
 
     return Categorys
   }

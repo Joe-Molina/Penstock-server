@@ -42,12 +42,13 @@ export class Products {
   }
 
   static async createProduct(req: any, res: any) {
-    const { name, price, photo, description, categoryId } = req.body.credentials
 
-    console.log(name, price, photo, description, categoryId)
+    const { name, price, photo, description, categoryId } = req.body
+
+    const { companyId } = req.user
 
     try {
-      const newProduct = await ProductModel.createProduct({ name, price, photo, description, categoryId })
+      const newProduct = await ProductModel.createProduct({ name, price, photo, description, categoryId, companyId })
       console.log(newProduct)
       res.json(newProduct)
     } catch (err) {
@@ -56,11 +57,16 @@ export class Products {
   }
 
   static async createCategory(req: any, res: any) {
+
+
+
     try {
+      const { companyId } = req.user
       const { name } = req.body
 
       console.log(req.body)
-      const newCategory = await ProductModel.createCategory(name)
+      console.log(companyId)
+      const newCategory = await ProductModel.createCategory({ name, companyId })
       res.json(newCategory)
     } catch (err) {
       res.json({ error: err })
@@ -125,9 +131,10 @@ export class Products {
   }
 
   static async getCategorys(req: any, res: any) {
+
+    const { companyId } = req.user
     try {
-      const Categorys = await ProductModel.getCategorys()
-      // res.json('hola')
+      const Categorys = await ProductModel.getCategorys({ companyId })
       res.json(Categorys)
     } catch (err) {
       res.json({ error: err })

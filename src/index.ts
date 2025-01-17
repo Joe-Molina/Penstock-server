@@ -5,6 +5,7 @@ import products from "./api/products/products.routes";
 import cookieParser from "cookie-parser";
 import Orders from "./api/orders/orders.routes";
 import path from 'path';
+import { authMiddleware } from "./services/authMiddleware";
 
 const PORT = process.env.PORT ?? 3000;
 const app = express();
@@ -16,7 +17,7 @@ app.use(cors({
 app.use(cookieParser());
 
 app.use("/auth", auth);
-app.use("/products", products);
+app.use("/products", authMiddleware, products);
 app.use("/orders", Orders);
 
 app.use('/images', express.static(path.join(__dirname, '..', 'uploads')));
