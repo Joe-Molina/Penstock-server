@@ -1,4 +1,5 @@
 import { v2 as cloudinary } from 'cloudinary';
+import fs from "fs-extra"
 
     // Configuration
     cloudinary.config({ 
@@ -35,7 +36,8 @@ import { v2 as cloudinary } from 'cloudinary';
     
          ]
         })
-    
+        // anadir la eliminacion del archivo posteriormente
+        fs.unlink(filePath)
         return url
         
     } catch (error) {
