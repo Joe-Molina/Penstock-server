@@ -26,6 +26,7 @@ router.get("/categorys", Products.getCategorys);
 router.post("/category/create", Products.createCategory);
 router.delete("/category/delete/:id", Products.deleteCategory);
 
-router.post("/save/image", upload.single("file"), Products.saveImage);
+router.post("/save/image", upload.single("file"),Products.saveImage);
+
 
 export default router;

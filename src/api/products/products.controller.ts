@@ -1,3 +1,4 @@
+import { uploadImg } from '../../services/cloudinary'
 import { ProductModel } from './products.model'
 
 export class Products {
@@ -43,13 +44,20 @@ export class Products {
 
   static async createProduct(req: any, res: any) {
 
+    const { companyId } = req.user
     const { name, price, photo, description, categoryId } = req.body
 
-    const { companyId } = req.user
-
+    console.log(req.body)
     try {
+
       const newProduct = await ProductModel.createProduct({ name, price, photo, description, categoryId, companyId })
+
+      if(!newProduct){
+        return res.json({error: 'error al crear el producto'})
+      }
+
       console.log(newProduct)
+
       res.json(newProduct)
     } catch (err) {
       res.json({ error: err })
@@ -142,8 +150,16 @@ export class Products {
   }
 
   static async saveImage(req: any, res: any) {
-    const { filename } = req.file;
-    console.log(filename)
-    res.json({ filename })
+    console.log(req.file.path)
+    
+    if(req.file.path){
+    const url = await uploadImg(req.file.path)
+
+    console.log(url)
+    
+    return res.json(url)
+    }
+
+    console.log('pq llega hasta aqui? xd')
   }
 }

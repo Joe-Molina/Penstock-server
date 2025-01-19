@@ -62,8 +62,6 @@ export class Auth {
 
     const token = req.cookies['access_token'];
 
-    console.log(token)
-
     try {
       if (token != undefined) {
         const response = jwtVerify(token);
@@ -85,9 +83,6 @@ export class Auth {
   static async NavInfo(req: any, res: any) {
 
     const token = req.cookies['access_token'];
-
-    console.log(token)
-
     try {
       if (token != undefined) {
         const response = jwtVerify(token);
@@ -135,7 +130,6 @@ export class Auth {
       if (userExist) {
         return res.status(400).json({ alert: "This user already exists", userExist });
       }
-
 
       const token = req.cookies['access_token']
       const user = jwtVerify(token)

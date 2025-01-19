@@ -60,20 +60,31 @@ export class ProductModel {
 
   static async createProduct({ name, price, photo, description, categoryId, companyId }: Product) {
 
-    const newProduct = await prisma.product.create({
-      data: {
-        name,
-        price: Number(price),
-        photo,
-        description,
-        categoryId: Number(categoryId),
-        companyId
-      },
-      include: {
-        category: true
-      }
-    })
-    return newProduct
+    try {
+      console.log(companyId)
+
+      const newProduct = await prisma.product.create({
+        data: {
+          name,
+          price: Number(price),
+          photo,
+          description,
+          categoryId: Number(categoryId),
+          companyId
+        },
+        include: {
+          category: true
+        }
+      })
+  
+      console.log(newProduct)
+  
+      return newProduct
+      
+    } catch (error) {
+      console.log(error)
+    }
+ 
   }
 
   static async createCategory({ name, companyId }: { name: string, companyId: number }) {
