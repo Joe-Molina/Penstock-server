@@ -56,6 +56,9 @@ export class ProductModel {
       where: {
         id: Number(id)
       },
+      include: {
+        category: true
+      },
       data
     })
     return product
@@ -117,15 +120,13 @@ export class ProductModel {
 
   static async deleteProduct(id: number) {
 
-    console.log(id)
-
     const deletedProduct = await prisma.product.delete({
       where: {
         id: Number(id)
       }
     })
 
-    console.log(deletedProduct)
+    // introducir eliminacion de foto en cloudinary al eliminar la foto
 
     return deletedProduct
   }

@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import auth from "./api/auth/auth.routes";
+import users from "./api/auth/users.routes";
 import products from "./api/products/products.routes";
 import cookieParser from "cookie-parser";
 import Orders from "./api/orders/orders.routes";
@@ -16,7 +17,9 @@ app.use(cors({
 }));
 app.use(cookieParser());
 
-app.use("/auth", authMiddleware, auth);
+
+app.use("/auth", auth);
+app.use("/users", authMiddleware, users)
 app.use("/products", authMiddleware, products);
 app.use("/orders", Orders);
 

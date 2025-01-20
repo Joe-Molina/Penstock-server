@@ -118,17 +118,11 @@ export class Products {
 
       const OrderExist = await ProductModel.getOrderProduct(id)
 
-      console.log(OrderExist)
-
       if (OrderExist) {
         return res.status(200).json({ orderExist: "Hay un pedido con este producto" })
       }
 
-      console.log(id)
-
       const deletedProduct = await ProductModel.deleteProduct(id)
-
-      console.log(deletedProduct)
 
       if (!deletedProduct) {
         return res.status(500).json({ error: "Error deleting Product" })
