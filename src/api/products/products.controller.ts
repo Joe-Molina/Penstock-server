@@ -3,9 +3,11 @@ import { ProductModel } from './products.model'
 
 export class Products {
 
-  static async getProducts(_req: any, res: any) {
+  static async getProducts(req: any, res: any) {
+    const { companyId } = req.user
+
     try {
-      const products = await ProductModel.getProducts()
+      const products = await ProductModel.getProducts({ companyId })
       res.json(products)
     } catch (err) {
       res.json({ error: err })
@@ -52,8 +54,8 @@ export class Products {
 
       const newProduct = await ProductModel.createProduct({ name, price, photo, description, categoryId, companyId })
 
-      if(!newProduct){
-        return res.json({error: 'error al crear el producto'})
+      if (!newProduct) {
+        return res.json({ error: 'error al crear el producto' })
       }
 
       console.log(newProduct)
@@ -151,13 +153,13 @@ export class Products {
 
   static async saveImage(req: any, res: any) {
     console.log(req.file.path)
-    
-    if(req.file.path){
-    const url = await uploadImg(req.file.path)
 
-    console.log(url)
-    
-    return res.json(url)
+    if (req.file.path) {
+      const url = await uploadImg(req.file.path)
+
+      console.log(url)
+
+      return res.json(url)
     }
 
     console.log('pq llega hasta aqui? xd')

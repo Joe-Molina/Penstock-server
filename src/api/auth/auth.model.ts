@@ -35,11 +35,11 @@ export class AuthModel {
 
   static async getAllSellers(companyId: number) {
     const sellersDb = await prisma.seller.findMany({
-     where: {
-      user: {
-        companyId
-      }
-     } ,
+      where: {
+        user: {
+          companyId
+        }
+      },
       include: {
         user: true
       }
@@ -58,8 +58,13 @@ export class AuthModel {
     return { Sellers };
   }
 
-  static async getAllClients() {
+  static async getAllClients(companyId: number) {
     const ClientsDb = await prisma.client.findMany({
+      where: {
+        user: {
+          companyId
+        }
+      },
       include: {
         user: true,
         salesperson_assignment: {
@@ -242,7 +247,7 @@ export class AuthModel {
           },
         },
       },
-      include:{
+      include: {
         Seller: true,
         client: {
           include: {
@@ -253,10 +258,10 @@ export class AuthModel {
             }
           }
         }
-        
+
       }
     });
-  return {
+    return {
       address: client.client[0].address,
       id: client.id,
       name: client.client[0].name,
@@ -267,9 +272,9 @@ export class AuthModel {
         id: client.client[0].salesperson_assignment[0].sellerId,
         name: client.client[0].salesperson_assignment[0].seller.name,
         lastname: client.client[0].salesperson_assignment[0].seller.lastname
-        }
+      }
+    }
   }
-}
 
   static async createSeller({
     username,

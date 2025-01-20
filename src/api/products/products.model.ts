@@ -4,8 +4,11 @@ import { Product } from './types'
 
 
 export class ProductModel {
-  static async getProducts() {
+  static async getProducts({ companyId }: { companyId: number }) {
     const products = await prisma.product.findMany({
+      where: {
+        companyId
+      },
       include: {
         category: true
       }
@@ -76,15 +79,15 @@ export class ProductModel {
           category: true
         }
       })
-  
+
       console.log(newProduct)
-  
+
       return newProduct
-      
+
     } catch (error) {
       console.log(error)
     }
- 
+
   }
 
   static async createCategory({ name, companyId }: { name: string, companyId: number }) {

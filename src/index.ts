@@ -16,7 +16,7 @@ app.use(cors({
 }));
 app.use(cookieParser());
 
-app.use("/auth", auth);
+app.use("/auth", authMiddleware, auth);
 app.use("/products", authMiddleware, products);
 app.use("/orders", Orders);
 

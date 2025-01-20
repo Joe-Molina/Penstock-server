@@ -197,7 +197,7 @@ export class Auth {
           companyId: user.companyId
         };
         const newSeller = await AuthModel.createSeller(seller);
-        
+
         if (!newSeller) {
           return res.status(500).json({ error: "Error registering client" });
         }
@@ -240,13 +240,12 @@ export class Auth {
 
   static async getSellers(req: any, res: any) {
 
-    const token = req.cookies['access_token']
-    const user = jwtVerify(token)
+    const { companyId } = req.user
 
 
     try {
-      if(user){
-        const sellers = await AuthModel.getAllSellers(user.companyId);
+      if (companyId) {
+        const sellers = await AuthModel.getAllSellers(companyId);
 
         if (sellers) {
           res.json(sellers);
@@ -261,8 +260,10 @@ export class Auth {
   }
 
   static async getClients(req: any, res: any) {
+    const { companyId } = req.user
+
     try {
-      const clients = await AuthModel.getAllClients();
+      const clients = await AuthModel.getAllClients(companyId);
 
       if (clients) {
         res.json(clients);
