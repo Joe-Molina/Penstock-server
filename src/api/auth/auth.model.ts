@@ -23,6 +23,21 @@ interface Seller extends User {
 }
 
 export class AuthModel {
+
+  static async findCompanyByName(name: string) {
+    try {
+      const company = await prisma.company.findFirst({
+        where: {
+          name
+        },
+      });
+
+      return company;
+    } catch (error) {
+      return console.log('hubo un error al crear la compania')
+    }
+  }
+
   static async findUserById(id: number) {
     const user = await prisma.user.findFirst({
       where: {

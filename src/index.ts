@@ -3,6 +3,7 @@ import cors from "cors";
 import auth from "./api/auth/auth.routes";
 import users from "./api/auth/users.routes";
 import products from "./api/products/products.routes";
+import products_without_auth from "./api/products/products_without_auth.routes";
 import cookieParser from "cookie-parser";
 import Orders from "./api/orders/orders.routes";
 import path from 'path';
@@ -21,6 +22,7 @@ app.use(cookieParser());
 app.use("/auth", auth);
 app.use("/users", authMiddleware, users)
 app.use("/products", authMiddleware, products);
+app.use("/products_without_auth", products_without_auth);
 app.use("/orders", Orders);
 
 app.use('/images', express.static(path.join(__dirname, '..', 'uploads')));

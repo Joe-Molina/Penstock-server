@@ -16,6 +16,20 @@ export class ProductModel {
     return products
   }
 
+  static async getProductsByCompanyName({ companyName }: { companyName: string }) {
+    const products = await prisma.product.findMany({
+      where: {
+        Company: {
+          name: companyName
+        }
+      },
+      include: {
+        category: true
+      }
+    })
+    return products
+  }
+
   static async getProductsByCategory(categoryId: number) {
     const products = await prisma.product.findMany({
       where: {

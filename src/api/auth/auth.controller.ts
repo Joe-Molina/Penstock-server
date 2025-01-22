@@ -209,12 +209,18 @@ export class Auth {
   }
 
   static async registerAdmin(req: any, res: any) {
-    const { username, email, password, role, company } = req.body
+    const { username, email, password, company } = req.body
 
     console.log(req.body)
 
     try {
       const userExist = await AuthModel.findUserByUsername(username);
+
+      const companyExist = await AuthModel.findCompanyByName(company);
+
+      if (companyExist) {
+        res.json({ alert: "ya hay una empresa registrada con este nombre" })
+      }
 
       if (userExist) {
         res.json({ alert: "this user already exist" });
@@ -225,7 +231,7 @@ export class Auth {
           username,
           password: hashedPassword,
           email,
-          role,
+          role: 'admin',
           company
         };
 

@@ -2,7 +2,7 @@ import { Router } from "express";
 import { Auth } from "./auth.controller";
 
 const router = Router();
-router.post("/register_admin", Auth.registerAdmin);
+
 
 router.get("/get_sellers", Auth.getSellers);
 router.post("/register_seller", Auth.registerSeller);
