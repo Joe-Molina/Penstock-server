@@ -17,6 +17,15 @@ export class ProductModel {
   }
 
   static async getProductsByCompanyName({ companyName }: { companyName: string }) {
+
+    const categorys = await prisma.category.findMany({
+      where: {
+        Company: {
+          name: companyName
+        }
+      }
+    })
+
     const products = await prisma.product.findMany({
       where: {
         Company: {
@@ -27,7 +36,7 @@ export class ProductModel {
         category: true
       }
     })
-    return products
+    return { products, categorys }
   }
 
   static async getProductsByCategory(categoryId: number) {
