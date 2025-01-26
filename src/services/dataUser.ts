@@ -12,6 +12,7 @@ export const jwtVerify = (key: string) => {
       role: string;
       loged: boolean;
       companyId: number;
+      companyName: string;
     };
     return user;
   }

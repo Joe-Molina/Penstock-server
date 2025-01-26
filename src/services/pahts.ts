@@ -18,7 +18,7 @@ export const PAHTS_API = {
   navAdmin: [
     {
       title: "Ver Catalogo",
-      url: '#',
+      url: '/catalogo/',
       // icon: ShoppingCart,
     },
     {

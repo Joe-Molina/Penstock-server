@@ -223,6 +223,9 @@ export class AuthModel {
       where: {
         username,
       },
+      include: {
+        Company: true,
+      }
     });
 
     return user;

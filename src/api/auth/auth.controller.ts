@@ -22,7 +22,8 @@ export class Auth {
             email: user.email,
             role: user.role,
             loged: true,
-            companyId: user.companyId
+            companyId: user.companyId,
+            companyName: user.Company?.name
           },
           JWT_SECRET_KEY,
           {
@@ -66,8 +67,10 @@ export class Auth {
       if (token != undefined) {
         const response = jwtVerify(token);
 
+        console.log(response)
+
         if (response && response.loged) {
-          return res.json({ user: true, username: response.username, role: response.role, email: response.email });
+          return res.json({ user: true, username: response.username, role: response.role, email: response.email, companyName: response.companyName });
         }
 
         res.json({ user: false });
