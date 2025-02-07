@@ -11,11 +11,11 @@ import { authMiddleware } from "./services/authMiddleware";
 
 const PORT = process.env.PORT ?? 3000;
 const app = express();
-app.use(express.json());
 app.use(cors({
   origin: ['https://penstock.jodomodev.com', 'http://localhost:3001', 'http://10.10.1.253:3001'], // Dominio del cliente
   credentials: true, // Permitir el envío de cookies
 }));
+app.use(express.json());
 app.use(cookieParser());
 
 

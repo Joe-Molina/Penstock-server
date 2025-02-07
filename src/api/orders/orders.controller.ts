@@ -64,32 +64,27 @@ export class Orders {
     }
   }
 
-  static async ClientcreateOrder(req: any, res: any) {
-    const data: User | false = jwtVerify(req.cookies.access_token);
-    try {
-      if (data != false) {
-        const order = await OrdersModel.createOrder(data.id, req.body.details);
+  static async createOrder(req: any, res: any) {
+    const user = jwtVerify(req.cookies.access_token);
+    const { details, clientId } = req.body
 
+    console.log('al menos llega', details, clientId)
+    console.log(req.body)
+
+    try {
+      if (user && user.role == 'client') {
+        console.log('client')
+        const order = await OrdersModel.createOrder(user.id, details, false);
         res.json(order);
+
+      } else if (user && user.role == 'admin') {
+        console.log('admin')
+        const order = await OrdersModel.createOrder(clientId, details, true);
+        res.json(order);
+
       } else {
         res.status(401).json({ error: "no autenticado" });
       }
-    } catch (err) {
-      res.json({ error: err });
-    }
-  }
-
-  static async AdmincreateOrder(req: any, res: any) {
-    const { clientId, data } = req.body;
-
-    const data2 = data.map(({ productId, amount }: { productId: number, amount: number }) => {
-      return { productId, amount }
-    })
-
-    try {
-      const order = await OrdersModel.createOrder(clientId, data2);
-      console.log(order)
-      res.json(order);
     } catch (err) {
       res.json({ error: err });
     }

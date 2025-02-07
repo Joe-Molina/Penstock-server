@@ -66,22 +66,27 @@ export class OrdersModel {
     return order;
   }
 
-  static async createOrder(clientId: number, details: any) {
-    const newOrder = await prisma.order.create({
-      data: {
-        clientId,
-        revised: true,
-        Order_Detail: {
-          createMany: {
-            data: details,
+  static async createOrder(clientId: number, details: any, revised: boolean) {
+    try {
+      const newOrder = await prisma.order.create({
+        data: {
+          clientId,
+          revised,
+          Order_Detail: {
+            createMany: {
+              data: details,
+            },
           },
         },
-      },
-      include: {
-        Order_Detail: true,
-      },
-    });
-    return newOrder;
+        include: {
+          Order_Detail: true,
+        },
+      });
+      return newOrder;
+    } catch (error) {
+      console.log(error)
+      return error
+    }
   }
 
   static async createInvocie(invoice_number: number, orderId: number) {
