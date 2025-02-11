@@ -43,32 +43,12 @@ export const PAHTS_API = {
     },
     {
       title: "Pedidos",
-      url: "#",
+      url: PAHTS.DASHBOARD_PEDIDOS,
       // icon: ShoppingCart,
-      items: [{
-        title: "Crear Pedido",
-        url: PAHTS.DASHBOARD_PEDIDOS,
-      }
-      ],
     },
     {
-      title: "Ventas",
+      title: "Ventas (en desarrollo)",
       url: "#",
-      // icon: Settings2,
-      items: [
-        {
-          title: "ver ventas",
-          url: "3",
-        },
-        {
-          title: "ventas por cliente",
-          url: "#",
-        },
-        {
-          title: "ventas por vendedor",
-          url: "#",
-        }
-      ],
     },
   ],
 
