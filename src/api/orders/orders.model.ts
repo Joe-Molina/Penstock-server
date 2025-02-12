@@ -4,12 +4,17 @@ export class OrdersModel {
   static async getOrders() {
     const orders = await prisma.order.findMany({
       include: {
-        Order_Detail: true,
+        Order_Detail: {
+          include: {
+            product: true
+          }
+        },
         client: {
           select: {
             name: true
           },
         },
+
       },
     });
     return orders;
