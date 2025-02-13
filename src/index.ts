@@ -23,7 +23,7 @@ app.use("/auth", auth);
 app.use("/users", authMiddleware, users)
 app.use("/products", authMiddleware, products);
 app.use("/products_without_auth", products_without_auth);
-app.use("/orders", Orders);
+app.use("/orders", authMiddleware, Orders);
 
 app.use('/images', express.static(path.join(__dirname, '..', 'uploads')));
 

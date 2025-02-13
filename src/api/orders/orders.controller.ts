@@ -9,10 +9,21 @@ interface User {
 }
 
 export class Orders {
-  static async getAllOrders(_req: any, res: any) {
+  static async getAllOrders(req: any, res: any) {
+
+    const { companyId } = req.user
+
+    console.log(companyId, 'a')
+
     try {
-      const orders = await OrdersModel.getOrders();
-      res.json(orders);
+      if (companyId) {
+        const orders = await OrdersModel.getOrders(companyId);
+
+        console.log(orders, 'aaaa')
+        res.json(orders);
+      } else {
+        res.json(false)
+      }
     } catch (err) {
       res.json({ error: err });
     }

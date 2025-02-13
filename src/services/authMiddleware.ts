@@ -4,6 +4,7 @@ import { jwtVerify } from "./dataUser";
 export const authMiddleware = (req: any, res: any, next: NextFunction) => {
 
   const token = req.cookies['access_token']
+  console.log(token)
   const user = jwtVerify(token)
   req.user = user;
 

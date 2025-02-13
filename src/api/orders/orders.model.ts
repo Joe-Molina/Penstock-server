@@ -1,8 +1,14 @@
 import { prisma } from "../../utils/prisma";
 
 export class OrdersModel {
-  static async getOrders() {
+  static async getOrders(companyId: number) {
+
+    console.log(companyId)
+
     const orders = await prisma.order.findMany({
+      where: {
+        companyId
+      },
       include: {
         Order_Detail: {
           include: {

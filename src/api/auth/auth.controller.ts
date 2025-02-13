@@ -11,6 +11,8 @@ export class Auth {
   static async login(req: any, res: any) {
     const { username, password } = req.body.credentials;
 
+    console.log('llegue')
+
     try {
       const user = await AuthModel.findUserByUsername(username);
 
@@ -50,7 +52,7 @@ export class Auth {
         res.json({ message: "user not found", loged: false });
       }
     } catch (error) {
-      res.json(error);
+      res.json(error, 'fuap');
     }
   }
 
