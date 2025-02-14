@@ -13,8 +13,6 @@ export class Orders {
 
     const { companyId } = req.user
 
-    console.log(companyId, 'a')
-
     try {
       if (companyId) {
         const orders = await OrdersModel.getOrders(companyId);
@@ -85,12 +83,12 @@ export class Orders {
     try {
       if (user && user.role == 'client') {
         console.log('client')
-        const order = await OrdersModel.createOrder(user.id, details, false);
+        const order = await OrdersModel.createOrder(user.id, details, false, user.companyId);
         res.json(order);
 
       } else if (user && user.role == 'admin') {
         console.log('admin')
-        const order = await OrdersModel.createOrder(clientId, details, true);
+        const order = await OrdersModel.createOrder(clientId, details, true, user.companyId);
         res.json(order);
 
       } else {

@@ -77,12 +77,13 @@ export class OrdersModel {
     return order;
   }
 
-  static async createOrder(clientId: number, details: any, revised: boolean) {
+  static async createOrder(clientId: number, details: any, revised: boolean, companyId: number) {
     try {
       const newOrder = await prisma.order.create({
         data: {
           clientId,
           revised,
+          companyId,
           Order_Detail: {
             createMany: {
               data: details,

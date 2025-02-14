@@ -52,7 +52,7 @@ export class Auth {
         res.json({ message: "user not found", loged: false });
       }
     } catch (error) {
-      res.json(error, 'fuap');
+      res.json(error);
     }
   }
 

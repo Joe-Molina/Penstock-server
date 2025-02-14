@@ -4,7 +4,6 @@ import { jwtVerify } from "./dataUser";
 export const authMiddleware = (req: any, res: any, next: NextFunction) => {
 
   const token = req.cookies['access_token']
-  console.log(token)
   const user = jwtVerify(token)
   req.user = user;
 
@@ -12,8 +11,6 @@ export const authMiddleware = (req: any, res: any, next: NextFunction) => {
     if (!token) {
       return res.status(401).json({ message: 'Token no proporcionado' });
     }
-
-
 
     // Continuar con la ejecución de la siguiente función en la cadena de middlewares
     next();
