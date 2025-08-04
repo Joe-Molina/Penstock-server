@@ -17,10 +17,13 @@ interface Client extends User {
   companyId: number;
 }
 
-interface Seller extends User {
-  name: string;
-  lastname: string;
-}
+// interface Seller {
+//   id: number;
+//   user: User;
+//   name: string;
+//   lastname: string;
+//   isAvtive: boolean;
+// }
 
 export class AuthModel {
 
@@ -91,7 +94,7 @@ export class AuthModel {
     });
 
 
-    const Clients = ClientsDb.map((client) => {
+    const Clients = ClientsDb.map((client: any) => {
       return {
         address: client.address,
         id: client.id,
@@ -279,6 +282,9 @@ export class AuthModel {
 
       }
     });
+
+    console.log(client)
+
     return {
       address: client.client[0].address,
       id: client.id,
@@ -302,7 +308,15 @@ export class AuthModel {
     role,
     lastname,
     companyId
-  }: Seller) {
+  }: {
+    username: string,
+    password: string,
+    email: string,
+    name: string,
+    role: string,
+    lastname: string,
+    companyId: number
+  }) {
 
     const newSeller = await prisma.user.create({
       include: {

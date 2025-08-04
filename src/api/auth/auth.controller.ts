@@ -161,6 +161,8 @@ export class Auth {
         // Intenta registrar al cliente
         const newClient = await AuthModel.createClient(client);
 
+        console.log(newClient)
+
         if (!newClient) {
           return res.status(500).json({ error: "Error registering client" });
         }
