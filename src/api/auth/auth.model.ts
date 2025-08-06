@@ -45,7 +45,6 @@ export class AuthModel {
     return user;
   }
 
-
   static async findUserByUsername(username: string) {
     const user = await prisma.user.findFirst({
       where: {

@@ -1,9 +1,10 @@
+import { Request, Response } from 'express'
 import { uploadImg } from '../../services/cloudinary'
 import { ProductModel } from './products.model'
 
 export class Products {
 
-  static async getProducts(req: any, res: any) {
+  static async getProducts(req: Request, res: Response) {
     const { companyId } = req.user
 
     try {
@@ -14,7 +15,7 @@ export class Products {
     }
   }
 
-  static async getProductsByCompanyName(req: any, res: any) {
+  static async getProductsByCompanyName(req: Request, res: Response) {
 
     const { companyName } = req.params
 
@@ -26,37 +27,37 @@ export class Products {
     }
   }
 
-  static async getProductsByCategory(req: any, res: any) {
+  static async getProductsByCategory(req: Request, res: Response) {
     try {
-      const products = await ProductModel.getProductsByCategory(req.params.id)
+      const products = await ProductModel.getProductsByCategory(Number(req.params.id))
       res.json(products)
     } catch (err) {
       res.json({ error: err })
     }
   }
 
-  static async getProductById(req: any, res: any) {
+  static async getProductById(req: Request, res: Response) {
     const { id } = req.params
     try {
-      const Oneproduct = await ProductModel.getProductByIdModel(id)
+      const Oneproduct = await ProductModel.getProductByIdModel(Number(id))
       res.json(Oneproduct)
     } catch (err) {
       res.json({ error: err })
     }
   }
 
-  static async updateProductById(req: any, res: any) {
+  static async updateProductById(req: Request, res: Response) {
     const { id } = req.params
     const { data } = req.body
     try {
-      const product = await ProductModel.updateProductByIdModel(id, data)
+      const product = await ProductModel.updateProductByIdModel(Number(id), data)
       res.json(product)
     } catch (err) {
       res.json({ error: err })
     }
   }
 
-  static async createProduct(req: any, res: any) {
+  static async createProduct(req: Request, res: Response) {
 
     const { companyId } = req.user
     const { name, price, photo, description, categoryId } = req.body
@@ -78,7 +79,7 @@ export class Products {
     }
   }
 
-  static async createCategory(req: any, res: any) {
+  static async createCategory(req: Request, res: Response) {
 
 
 
@@ -95,7 +96,7 @@ export class Products {
     }
   }
 
-  static async deleteCategory(req: any, res: any) {
+  static async deleteCategory(req: Request, res: Response) {
 
     const { id } = req.params
 
@@ -103,7 +104,7 @@ export class Products {
 
     try {
       // Aquí asumo que `deleteCategory` está esperando un número
-      const deletedCategory = await ProductModel.deleteCategory(id)
+      const deletedCategory = await ProductModel.deleteCategory(Number(id))
 
       console.log(deletedCategory)
 
@@ -117,24 +118,24 @@ export class Products {
     }
   }
 
-  static async deleteProduct(req: any, res: any) {
+  static async deleteProduct(req: Request, res: Response) {
 
     const { id } = req.params
 
     try {
-      const ProductExist = await ProductModel.getProductByIdModel(id)
+      const ProductExist = await ProductModel.getProductByIdModel(Number(id))
 
       if (!ProductExist) {
         return res.status(404).json({ error: "Product not found" })
       }
 
-      const OrderExist = await ProductModel.getOrderProduct(id)
+      const OrderExist = await ProductModel.getOrderProduct(Number(id))
 
       if (OrderExist) {
         return res.status(200).json({ orderExist: "Hay un pedido con este producto" })
       }
 
-      const deletedProduct = await ProductModel.deleteProduct(id)
+      const deletedProduct = await ProductModel.deleteProduct(Number(id))
 
       if (!deletedProduct) {
         return res.status(500).json({ error: "Error deleting Product" })
@@ -146,7 +147,7 @@ export class Products {
     }
   }
 
-  static async getCategorys(req: any, res: any) {
+  static async getCategorys(req: Request, res: Response) {
 
     const { companyId } = req.user
     try {
@@ -157,10 +158,8 @@ export class Products {
     }
   }
 
-  static async saveImage(req: any, res: any) {
-    console.log(req.file.path)
-
-    if (req.file.path) {
+  static async saveImage(req: Request, res: Response) {
+    if (req.file && req.file.path) {
       const url = await uploadImg(req.file.path)
 
       console.log(url)

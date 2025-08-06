@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import auth from "./api/auth/auth.routes";
-import users from "./api/auth/users.routes";
 import products from "./api/products/products.routes";
 import products_without_auth from "./api/products/products_without_auth.routes";
 import cookieParser from "cookie-parser";
@@ -19,7 +18,6 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/auth", auth);
-app.use("/users", authMiddleware, users)
 app.use("/products", authMiddleware, products);
 app.use("/products_without_auth", products_without_auth);
 app.use("/orders", authMiddleware, Orders);

@@ -1,5 +1,5 @@
 import { prisma } from '../../utils/prisma'
-import { Product } from './types'
+import { Product, ProductUpdate } from './types'
 
 
 
@@ -55,7 +55,7 @@ export class ProductModel {
   static async getProductByIdModel(id: number) {
     const product = await prisma.product.findFirst({
       where: {
-        id: Number(id)
+        id
       },
       include: {
         category: true
@@ -68,16 +68,16 @@ export class ProductModel {
 
     const orderExist = await prisma.order_Detail.findFirst({
       where: {
-        productId: Number(id)
+        productId: id
       }
     })
     return orderExist
   }
 
-  static async updateProductByIdModel(id: number, data: any) {
+  static async updateProductByIdModel(id: number, data: ProductUpdate) {
     const product = await prisma.product.update({
       where: {
-        id: Number(id)
+        id
       },
       include: {
         category: true
@@ -135,7 +135,7 @@ export class ProductModel {
 
     const deletedCategory = await prisma.category.delete({
       where: {
-        id: Number(id)
+        id: id
       }
     })
     return deletedCategory
@@ -145,7 +145,7 @@ export class ProductModel {
 
     const deletedProduct = await prisma.product.delete({
       where: {
-        id: Number(id)
+        id
       }
     })
 
