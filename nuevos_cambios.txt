@@ -1,0 +1,11 @@
+estoy quitando la tabla seller y la salespersonasigment de la bd.
+
+la idea es que ya no sea necesario un intermediario como lo es actualmente.
+
+un usuario puede tener una compania, pero debe crearla despues de una cuenta.
+
+tambien elimino la tabla client, que se fusiona con la tabla user. 
+
+ahora la compania es la que tiene el user asignado como llave foranea y no al reves
+
+

@@ -1,20 +1,30 @@
-import { NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
 import { jwtVerify } from "./dataUser";
 
-export const authMiddleware = (req: any, res: any, next: NextFunction) => {
+export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
 
   const token = req.cookies['access_token']
-  const user = jwtVerify(token)
-  req.user = user;
+
+
+  if (!token) {
+    return res.status(401).json({ message: 'Token no proporcionado' });
+  }
 
   try {
-    if (!token) {
-      return res.status(401).json({ message: 'Token no proporcionado' });
+    const user = jwtVerify(token)
+
+    if (!user) {
+      return res.status(403).json({ message: 'Token no proporcionado' });
     }
 
-    // Continuar con la ejecución de la siguiente función en la cadena de middlewares
+    req.user = user;
     next();
-  } catch (error) {
+  } catch (err) {
+
+    if (err instanceof Error) {
+      console.error(err.message);
+    }
+
     return res.status(403).json({ message: 'Token inválido o expirado' });
   }
 };

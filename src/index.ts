@@ -18,7 +18,6 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-
 app.use("/auth", auth);
 app.use("/users", authMiddleware, users)
 app.use("/products", authMiddleware, products);

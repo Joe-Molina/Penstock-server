@@ -13,53 +13,23 @@ model Company {
   name      String     @unique
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  User      User[]
   Category  Category[]
   Product   Product[]
   Order     Order[]
   Invocie   Invoice[]
+  User      User?      @relation(fields: [userId], references: [id])
+  userId    Int?
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String
-  password  String
-  email     String   @unique
-  role      String
-  status    Boolean  @default(true)
-  client    Client[]
-  Seller    Seller[]
-  Company   Company? @relation(fields: [companyId], references: [id])
-  companyId Int?
-}
-
-model Client {
-  id                     Int                      @id @default(autoincrement())
-  name                   String
-  lastname               String
-  store                  String
-  address                String
-  user                   User                     @relation(fields: [userId], references: [id])
-  userId                 Int
-  Order                  Order[]
-  salesperson_assignment salesperson_assignment[]
-}
-
-model Seller {
-  id                     Int                      @id @default(autoincrement())
-  name                   String
-  lastname               String?
-  user                   User                     @relation(fields: [userId], references: [id])
-  userId                 Int
-  salesperson_assignment salesperson_assignment[]
-}
-
-model salesperson_assignment {
-  id       Int    @id @default(autoincrement())
-  seller   Seller @relation(fields: [sellerId], references: [id])
-  sellerId Int
-  client   Client @relation(fields: [clientId], references: [id])
-  clientId Int    @unique
+  id       Int       @id @default(autoincrement())
+  username String
+  password String
+  name     String
+  lastname String
+  email    String    @unique
+  Order    Order[]
+  Company  Company[]
 }
 
 model Category {
@@ -88,7 +58,7 @@ model Order {
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   revised      Boolean        @default(false)
-  client       Client         @relation(fields: [clientId], references: [id])
+  client       User           @relation(fields: [clientId], references: [id])
   clientId     Int
   Order_Detail Order_Detail[]
   Invoice      Invoice[]
@@ -97,14 +67,15 @@ model Order {
 }
 
 model Order_Detail {
-  id        Int      @id @default(autoincrement())
-  order     Order    @relation(fields: [orderId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  orderId   Int
-  product   Product  @relation(fields: [productId], references: [id])
-  productId Int
-  amount    Int
+  id           Int      @id @default(autoincrement())
+  order        Order    @relation(fields: [orderId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  orderId      Int
+  product      Product  @relation(fields: [productId], references: [id])
+  productId    Int
+  cant         Int
+  actual_price Float
 }
 
 model Invoice {

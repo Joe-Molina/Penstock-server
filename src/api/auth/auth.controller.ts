@@ -3,12 +3,41 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 const JWT_SECRET_KEY = "el_mejor_secreto_del_mundo_mundiall"
 import { jwtVerify } from "../../services/dataUser";
-import { PAHTS_API } from "../../services/pahts";
+import { Request, Response } from "express";
+
 
 export class Auth {
 
+  static info = {
 
-  static async login(req: any, res: any) {
+    userInfo: async (req: Request, res: Response) => {
+
+      const token = req.cookies['access_token'];
+
+      try {
+        if (token != undefined) {
+          const response = jwtVerify(token);
+
+          console.log(response)
+
+          if (response && response.loged) {
+            return res.json({ user: true, username: response.username, email: response.email });
+          }
+
+          res.json({ user: false });
+        } else {
+          res.json({ user: false });
+        }
+      } catch (error) {
+        console.error(error);
+        res.json({ user: false }).status(500);
+      }
+    },
+
+
+  }
+
+  async login(req: Request, res: Response) {
     const { username, password } = req.body.credentials;
 
     console.log('llegue')
@@ -22,10 +51,7 @@ export class Auth {
             id: user.id,
             username: user.username,
             email: user.email,
-            role: user.role,
             loged: true,
-            companyId: user.companyId,
-            companyName: user.Company?.name
           },
           JWT_SECRET_KEY,
           {
@@ -56,306 +82,59 @@ export class Auth {
     }
   }
 
-  static async logout(req: any, res: any) {
+  async logout(req: Request, res: Response) {
+
     res.clearCookie('access_token').json({ message: 'Sesión cerrada exitosamente' });
     ;
   }
 
-  static async userInfo(req: any, res: any) {
-
-    const token = req.cookies['access_token'];
-
-    try {
-      if (token != undefined) {
-        const response = jwtVerify(token);
-
-        console.log(response)
-
-        if (response && response.loged) {
-          return res.json({ user: true, username: response.username, role: response.role, email: response.email, companyName: response.companyName });
-        }
-
-        res.json({ user: false });
-      } else {
-        res.json({ user: false });
-      }
-    } catch (error) {
-      console.error(error);
-      res.json({ user: false }).status(500);
-    }
-  }
-
-  static async NavInfo(req: any, res: any) {
-
-    const token = req.cookies['access_token'];
-    try {
-      if (token != undefined) {
-        const response = jwtVerify(token);
-
-        if (response && response.role === 'client') {
-          return res.json(PAHTS_API.navClient);
-        }
-
-        if (response && response.role === 'seller') {
-          return res.json(PAHTS_API.navSeller);
-        }
-
-        if (response && response.role === 'admin') {
-          return res.json(PAHTS_API.navAdmin);
-        }
-
-        res.json({ user: false });
-      } else {
-        res.json({ user: false });
-      }
-    } catch (error) {
-      console.error(error);
-      res.json({ user: false }).status(500);
-    }
-  }
-
-  static async registerClient(req: any, res: any) {
-
-    console.log(req.body);
-
-    const {
-      name,
-      lastname,
-      username,
-      email,
-      password,
-      sellerId,
-      store,
-      address,
-    } = req.body.credentials;
-
-    try {
-      // Verifica si el usuario ya existe
-      const userExist = await AuthModel.findUserByUsername(username);
-      if (userExist) {
-        return res.status(400).json({ alert: "This user already exists", userExist });
-      }
-
-      const token = req.cookies['access_token']
-      const user = jwtVerify(token)
-
-      if (user) {
-
-        // Hashea la contraseña
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Crea un objeto cliente
-        const client = {
-          username,
-          password: hashedPassword,
-          email,
-          name,
-          lastname,
-          store,
-          address,
-          role: "client",
-          sellerId: Number(sellerId),
-          companyId: user.companyId
-        };
-
-        // Intenta registrar al cliente
-        const newClient = await AuthModel.createClient(client);
-
-        console.log(newClient)
-
-        if (!newClient) {
-          return res.status(500).json({ error: "Error registering client" });
-        }
-
-        // Responde con el cliente registrado
-        return res.status(201).json(newClient);
-      } else {
-        res.json({ error: "no estas logeado" });
-      }
-
-    } catch (err: any) {
-      console.error("Error during client registration:", err);
-      return res.status(500).json({ error: "Internal Server Error", details: err.message });
-    }
-  }
-
-  static async registerSeller(req: any, res: any) {
-    const { username, email, password, name, lastname } = req.body.credentials;
-
-    const token = req.cookies['access_token']
-    const user = jwtVerify(token)
-
-    try {
-
-      const userExist = await AuthModel.findUserByUsername(username);
-      if (userExist) {
-        return res.status(400).json({ alert: "This user already exists" });
-      }
-      const hashedPassword = bcrypt.hashSync(password, 10);
-
-      if (user) {
-        const seller = {
-          username,
-          password: hashedPassword,
-          email,
-          name,
-          role: "seller",
-          lastname,
-          companyId: user.companyId
-        };
-        const newSeller = await AuthModel.createSeller(seller);
-
-        if (!newSeller) {
-          return res.status(500).json({ error: "Error registering client" });
-        }
-        res.json(newSeller);
-      }
-    } catch (err) {
-      res.json({ error: err });
-    }
-  }
-
-  static async registerAdmin(req: any, res: any) {
-    const { username, email, password, company } = req.body
-
-    console.log(req.body)
+  static async registerUser(req: Request, res: Response) {
+    const { username, email, password, name, lastname } = req.body
 
     try {
       const userExist = await AuthModel.findUserByUsername(username);
-
-      const companyExist = await AuthModel.findCompanyByName(company);
-
-      if (companyExist) {
-        res.json({ alert: "ya hay una empresa registrada con este nombre" })
-      }
 
       if (userExist) {
         res.json({ alert: "this user already exist" });
       } else {
         const hashedPassword = bcrypt.hashSync(password, 10);
 
-        const admin = {
+        const newUserData = {
           username,
           password: hashedPassword,
+          name,
+          lastname,
           email,
-          role: 'admin',
-          company
         };
 
-        const newSeller = await AuthModel.createAdmin(admin);
+        const newUser = await AuthModel.createUser(newUserData);
 
-        res.json(newSeller);
+        res.json(newUser);
       }
     } catch (err) {
       res.json({ error: err });
     }
   }
 
-  static async getSellers(req: any, res: any) {
-
-    const { companyId } = req.user
-
-
-    try {
-      if (companyId) {
-        const sellers = await AuthModel.getAllSellers(companyId);
-
-        if (sellers) {
-          res.json(sellers);
-        } else {
-          res.json({ response: false });
-        }
-      }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Error interno del servidor" });
-    }
-  }
-
-  static async getClients(req: any, res: any) {
-    const { companyId } = req.user
+  static async registerCompany(req: Request, res: Response) {
+    const { id } = req.user
+    const { name } = req.body
 
     try {
-      const clients = await AuthModel.getAllClients(companyId);
+      const companyExist = await AuthModel.findCompanyByName(name);
+      const moreThanOneCompany = await AuthModel.findCompanyByUser(id)
 
-      if (clients) {
-        res.json(clients);
+      if (companyExist || moreThanOneCompany) {
+        res.json({ alert: "this user already exist" });
       } else {
-        res.json({ response: false });
+
+        const newUser = await AuthModel.createCompany({ userId: id, name });
+
+        res.json(newUser);
       }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Error interno del servidor" });
+    } catch (err) {
+      res.json({ error: err });
     }
   }
 
-  static async deleteSeller(req: any, res: any) {
-    try {
-      const sellers = await AuthModel.deleteSeller(Number(req.params.id));
-
-      if (sellers) {
-        console.log(sellers)
-        res.json(sellers);
-      }
-
-      // res.status(404).json({ error: 'a problem has ocurred' })
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Error interno del servidor" });
-    }
-  }
-
-  static async restoreSeller(req: any, res: any) {
-    try {
-      const sellers = await AuthModel.RestoreSeller(Number(req.params.id));
-
-      if (sellers) {
-        res.json(sellers);
-      }
-
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Error interno del servidor" });
-    }
-  }
-
-  static async deleteClient(req: any, res: any) {
-    try {
-      const client = await AuthModel.deleteClient(Number(req.params.id));
-
-      if (client) {
-        res.json(client);
-      }
-
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Error interno del servidor" });
-    }
-  }
-
-  static async restoreClient(req: any, res: any) {
-    try {
-      const client = await AuthModel.RestoreClient(Number(req.params.id));
-
-      if (client) {
-        res.json(client);
-      }
-
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Error interno del servidor" });
-    }
-  }
-
-  static async assignSeller(req: any, res: any) {
-    const { sellerId, clientId } = req.body;
-
-    try {
-      const asignment = await AuthModel.assignSeller(clientId, sellerId);
-      res.json(asignment);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Error interno del servidor" });
-    }
-  }
 }

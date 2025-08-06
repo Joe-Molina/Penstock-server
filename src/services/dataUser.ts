@@ -5,15 +5,7 @@ export const jwtVerify = (key: string) => {
   if (!key) {
     return false;
   } else {
-    const user = jwt.verify(key, JWT_SECRET_KEY) as {
-      id: number;
-      username: string;
-      email: string;
-      role: string;
-      loged: boolean;
-      companyId: number;
-      companyName: string;
-    };
+    const user = jwt.verify(key, JWT_SECRET_KEY) as UserPayload & { loged: boolean };
     return user;
   }
 };
