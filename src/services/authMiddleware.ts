@@ -14,7 +14,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     const user = jwtVerify(token)
 
     if (!user) {
-      return res.status(403).json({ message: 'Token no proporcionado' });
+      return res.status(403).json({ message: 'Token no proporcionado', loged: false });
     }
 
     req.user = user;

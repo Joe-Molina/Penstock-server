@@ -1,47 +1,20 @@
 import { AuthModel } from "./auth.model";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-const JWT_SECRET_KEY = "el_mejor_secreto_del_mundo_mundiall"
 import { Request, Response } from "express";
+import { jwtSecret } from "../../../config";
 
 
 export class Auth {
 
-  // static info = {
-
-  //   userInfo: async (req: Request, res: Response) => {
-
-  //     const token = req.cookies['access_token'];
-
-  //     try {
-  //       if (token != undefined) {
-  //         const response = jwtVerify(token);
-
-  //         console.log(response)
-
-  //         if (response && response.loged) {
-  //           return res.json({ user: true, username: response.username, email: response.email });
-  //         }
-
-  //         res.json({ user: false });
-  //       } else {
-  //         res.json({ user: false });
-  //       }
-  //     } catch (error) {
-  //       console.error(error);
-  //       res.json({ user: false }).status(500);
-  //     }
-  //   },
-
-
-  // }
-
   static async login(req: Request, res: Response) {
-    const { username, password } = req.body.credentials;
+    const { username, password } = req.body;
     try {
       const user = await AuthModel.findUserByUsername(username);
 
-      if (user) {
+      console.log(user)
+
+      if (user && jwtSecret) {
         const token = jwt.sign(
           {
             id: user.id,
@@ -49,14 +22,16 @@ export class Auth {
             lastname: user.lastname,
             username: user.username,
             email: user.email,
-            loged: true,
-            companyId: user.Company[0].id
+            logged: true,
+            companyId: user.Company[0] ? user.Company[0].id : undefined
           },
-          JWT_SECRET_KEY,
+          jwtSecret,
           {
             expiresIn: "8h",
           }
         );
+
+        console.log(token)
 
         const matchPassword = bcrypt.compareSync(password, user.password);
         if (matchPassword) {
@@ -77,11 +52,14 @@ export class Auth {
         res.json({ message: "user not found", loged: false });
       }
     } catch (error) {
-      res.json(error);
+      if (error instanceof Error) {
+        console.log(error)
+        res.json(error.message);
+      }
     }
   }
 
-  static async logout(req: Request, res: Response) {
+  static async logout(_req: Request, res: Response) {
 
     res.clearCookie('access_token').json({ message: 'Sesión cerrada exitosamente' });
     ;
@@ -92,6 +70,8 @@ export class Auth {
 
     try {
       const userExist = await AuthModel.findUserByUsername(username);
+      console.log({ username, email, password, name, lastname })
+
 
       if (userExist) {
         res.json({ alert: "this user already exist" });
@@ -133,6 +113,18 @@ export class Auth {
       }
     } catch (err) {
       res.json({ error: err });
+    }
+  }
+
+  static async isLoged(req: Request, res: Response) {
+    const { user } = req
+
+    try {
+      if (user.id) {
+        res.json({ loged: true })
+      }
+    } catch (error) {
+      if (error instanceof Error) res.json({ loged: false })
     }
   }
 

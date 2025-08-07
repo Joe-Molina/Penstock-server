@@ -25,8 +25,7 @@ export class Orders {
     const { details, clientId } = req.body
 
     try {
-      if (user) {
-        console.log('admin')
+      if (user && user.companyId) {
         const order = await OrdersModel.createOrder(clientId, details, true, user.companyId);
         res.json(order);
 

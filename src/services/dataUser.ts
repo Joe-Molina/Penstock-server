@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { UserPayloadJwt } from "../types/express";
 const JWT_SECRET_KEY = "el_mejor_secreto_del_mundo_mundiall"
 
 export const jwtVerify = (key: string) => {

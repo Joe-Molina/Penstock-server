@@ -1,10 +1,14 @@
 import { prisma } from "../../utils/prisma";
 
+interface DetailsProps {
+  orderId: number
+  productId: number
+  cant: number
+  actual_price: number
+}
+
 export class OrdersModel {
   static async getOrders(companyId: number) {
-
-    console.log(companyId)
-
     const orders = await prisma.order.findMany({
       where: {
         companyId
@@ -26,33 +30,6 @@ export class OrdersModel {
     return orders;
   }
 
-  static async getOrders_fromAssignedCustomers(ids: any[]) {
-    const orders = await prisma.order.findMany({
-      where: {
-        clientId: {
-          in: ids,
-        },
-      },
-      include: {
-        Order_Detail: true,
-      },
-    });
-    return orders;
-  }
-
-  static async getAssignedCustomersIds(id: any) {
-    const clients = await prisma.salesperson_assignment.findMany({
-      where: {
-        sellerId: id,
-      },
-      select: {
-        clientId: true,
-      },
-    });
-
-    return clients;
-  }
-
   static async getOrdersByClientId(clientId: number) {
     const orders = await prisma.order.findMany({
       where: {
@@ -65,8 +42,8 @@ export class OrdersModel {
     return orders;
   }
 
-  static async getOrderById({ id }: any) {
-    const order: any | null = await prisma.order.findFirst({
+  static async getOrderById({ id }: { id: number }) {
+    const order = await prisma.order.findFirst({
       where: {
         id,
       },
@@ -74,10 +51,11 @@ export class OrdersModel {
         Order_Detail: true,
       },
     });
+
     return order;
   }
 
-  static async createOrder(clientId: number, details: any, revised: boolean, companyId: number) {
+  static async createOrder(clientId: number, details: DetailsProps, revised: boolean, companyId: number) {
     try {
       const newOrder = await prisma.order.create({
         data: {

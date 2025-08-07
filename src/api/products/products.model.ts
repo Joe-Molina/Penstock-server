@@ -98,7 +98,7 @@ export class ProductModel {
           price: Number(price),
           photo,
           description,
-          categoryId: Number(categoryId),
+          categoryId,
           companyId
         },
         include: {
@@ -124,9 +124,6 @@ export class ProductModel {
         companyId
       }
     })
-
-    console.log("nueva categoria")
-    console.log(newCategory)
 
     return newCategory
   }
@@ -154,7 +151,7 @@ export class ProductModel {
     return deletedProduct
   }
 
-  static async getCategorys({ companyId }: { companyId: number }) {
+  static async getCategorys(companyId: number) {
 
     const Categorys = await prisma.category.findMany({
       where: {

@@ -1,3 +1,4 @@
+import { UserPayload } from "../../types/express";
 import { prisma } from "../../utils/prisma";
 export class AuthModel {
 
@@ -46,34 +47,43 @@ export class AuthModel {
   }
 
   static async findUserByUsername(username: string) {
-    const user = await prisma.user.findFirst({
-      where: {
-        username,
-      },
-      include: {
-        Company: true,
-      }
-    });
+    try {
+      const user = await prisma.user.findFirst({
+        where: {
+          username,
+        },
+        include: {
+          Company: true,
+        }
+      });
 
-    return user;
+      return user;
+    } catch (error) {
+      if (error instanceof Error) console.error(error.message)
+    }
   }
 
   static async createUser({ username, email, password, lastname, name }: UserPayload & { password: string }) {
 
-    const newUser = await prisma.user.create({
-      data: {
-        username,
-        password,
-        email,
-        lastname,
-        name,
-      },
-    });
+    try {
+      const newUser = await prisma.user.create({
+        data: {
+          username,
+          password,
+          email,
+          lastname,
+          name,
+        },
+      });
 
-    return {
-      username: newUser.username,
-      email: newUser.email,
-    };
+      return {
+        username: newUser.username,
+        email: newUser.email,
+      };
+    } catch (error) {
+      if (error instanceof Error)
+        console.error(error.message)
+    }
   }
 
   static async createCompany({ userId, name }: { userId: number, name: string }) {

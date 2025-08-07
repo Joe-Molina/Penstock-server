@@ -1,20 +1,26 @@
-interface UserPayload {
-  name: string
-  lastname: string
+// src/types/express/index.d.ts
+
+// import { Request } from 'express';
+
+// Definimos el tipo de la carga útil del usuario que va en el JWT
+export interface UserPayload {
+  name: string;
+  lastname: string;
   username: string;
   email: string;
-  // ...otros campos que necesites
 }
 
-interface UserPayloadJwt extends UserPayload {
-  id: number
-  loged: boolean;
-  companyId: number
+export interface UserPayloadJwt extends UserPayload {
+  id: number;
+  logged: boolean; // Corregí 'loged' a 'logged'
+  companyId?: number;
 }
 
-// Usa la "declaración de módulos" para extender una interfaz existente
-declare namespace Express {
-  export interface Request {
-    user: UserPayloadJwt; // Agrega la propiedad 'user', puede ser opcional
+// Ahora usamos la declaración de módulos para extender el namespace de Express
+declare global {
+  namespace Express {
+    interface Request {
+      user: UserPayloadJwt;
+    }
   }
 }

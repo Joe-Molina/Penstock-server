@@ -8,8 +8,10 @@ export class Products {
     const { companyId } = req.user
 
     try {
-      const products = await ProductModel.getProducts({ companyId })
-      res.json(products)
+      if (companyId) {
+        const products = await ProductModel.getProducts({ companyId })
+        res.json(products)
+      }
     } catch (err) {
       res.json({ error: err })
     }
@@ -65,32 +67,30 @@ export class Products {
     console.log(req.body)
     try {
 
-      const newProduct = await ProductModel.createProduct({ name, price, photo, description, categoryId, companyId })
+      if (companyId) {
+        const newProduct = await ProductModel.createProduct({ name, price, photo, description, categoryId, companyId })
 
-      if (!newProduct) {
-        return res.json({ error: 'error al crear el producto' })
+        if (!newProduct) {
+          return res.json({ error: 'error al crear el producto' })
+        }
+        res.json(newProduct)
       }
-
-      console.log(newProduct)
-
-      res.json(newProduct)
     } catch (err) {
       res.json({ error: err })
     }
   }
 
   static async createCategory(req: Request, res: Response) {
+    const { companyId } = req.user
+    const { name } = req.body
 
 
 
     try {
-      const { companyId } = req.user
-      const { name } = req.body
-
-      console.log(req.body)
-      console.log(companyId)
-      const newCategory = await ProductModel.createCategory({ name, companyId })
-      res.json(newCategory)
+      if (companyId) {
+        const newCategory = await ProductModel.createCategory({ name, companyId })
+        res.json(newCategory)
+      }
     } catch (err) {
       res.json({ error: err })
     }
@@ -151,8 +151,10 @@ export class Products {
 
     const { companyId } = req.user
     try {
-      const Categorys = await ProductModel.getCategorys({ companyId })
-      res.json(Categorys)
+      if (companyId) {
+        const Categorys = await ProductModel.getCategorys(companyId)
+        res.json(Categorys)
+      }
     } catch (err) {
       res.json({ error: err })
     }
