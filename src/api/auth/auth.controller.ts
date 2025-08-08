@@ -2,7 +2,8 @@ import { AuthModel } from "./auth.model";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
-import { jwtSecret } from "../../../config";
+import 'dotenv/config';
+
 
 
 export class Auth {
@@ -14,7 +15,7 @@ export class Auth {
 
       console.log(user)
 
-      if (user && jwtSecret) {
+      if (user && process.env.JWT_SECRET_KEY) {
         const token = jwt.sign(
           {
             id: user.id,
@@ -25,7 +26,7 @@ export class Auth {
             logged: true,
             companyId: user.Company[0] ? user.Company[0].id : undefined
           },
-          jwtSecret,
+          process.env.JWT_SECRET_KEY,
           {
             expiresIn: "8h",
           }
