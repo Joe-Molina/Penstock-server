@@ -34,6 +34,8 @@
     "typescript-eslint": "^8.39.0"
   },
   "dependencies": {
+    "@libsql/client": "^0.15.10",
+    "@prisma/adapter-libsql": "^6.13.0",
     "@prisma/client": "6.13.0",
     "@typescript-eslint/eslint-plugin": "^8.39.0",
     "@typescript-eslint/parser": "^8.39.0",
