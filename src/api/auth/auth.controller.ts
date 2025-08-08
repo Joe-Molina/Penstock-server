@@ -39,9 +39,10 @@ export class Auth {
           res
             .cookie("access_token", token, {
               httpOnly: true,
-              secure: true,
+              secure: process.env.NODE_ENV === 'production' ? true : false,
               sameSite: 'none',
               maxAge: 1000 * 60 * 60, // 1 hour
+              path: '/'
             })
             .json({ message: "cookie set", loged: true, token });
 
