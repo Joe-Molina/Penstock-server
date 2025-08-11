@@ -2,9 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import { jwtVerify } from "./dataUser";
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-
   const token = req.cookies['access_token']
 
+  console.log(token, 'aaaaaaaaaaaaaa')
 
   if (!token) {
     return res.status(401).json({ message: 'Token no proporcionado' });
@@ -12,6 +12,8 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
 
   try {
     const user = jwtVerify(token)
+
+    console.log(user)
 
     if (!user) {
       return res.status(403).json({ message: 'Token no proporcionado', loged: false });

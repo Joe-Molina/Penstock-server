@@ -12,7 +12,6 @@ export interface UserPayload {
 
 export interface UserPayloadJwt extends UserPayload {
   id: number;
-  logged: boolean; // Corregí 'loged' a 'logged'
   companyId?: number;
 }
 

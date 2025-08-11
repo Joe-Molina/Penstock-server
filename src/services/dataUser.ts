@@ -1,12 +1,13 @@
 import jwt from "jsonwebtoken";
 import { UserPayloadJwt } from "../types/express";
-const JWT_SECRET_KEY = "el_mejor_secreto_del_mundo_mundiall"
+import 'dotenv/config'
 
 export const jwtVerify = (key: string) => {
+  const secret = process.env.JWT_SECRET_KEY
   if (!key) {
     return false;
   } else {
-    const user = jwt.verify(key, JWT_SECRET_KEY) as UserPayloadJwt;
+    const user = jwt.verify(key, secret!) as UserPayloadJwt;
     return user;
   }
 };

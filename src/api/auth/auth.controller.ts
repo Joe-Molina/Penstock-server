@@ -13,8 +13,6 @@ export class Auth {
     try {
       const user = await AuthModel.findUserByUsername(username);
 
-      console.log(user)
-
       if (user && process.env.JWT_SECRET_KEY) {
         const token = jwt.sign(
           {
@@ -23,7 +21,6 @@ export class Auth {
             lastname: user.lastname,
             username: user.username,
             email: user.email,
-            logged: true,
             companyId: user.Company[0] ? user.Company[0].id : undefined
           },
           process.env.JWT_SECRET_KEY,
@@ -32,15 +29,13 @@ export class Auth {
           }
         );
 
-        console.log(token)
-
         const matchPassword = bcrypt.compareSync(password, user.password);
         if (matchPassword) {
           res
             .cookie("access_token", token, {
               httpOnly: true,
               secure: process.env.NODE_ENV === 'production' ? true : false,
-              sameSite: 'none',
+              sameSite: 'strict',
               maxAge: 1000 * 60 * 60, // 1 hour
               path: '/'
             })
@@ -118,13 +113,15 @@ export class Auth {
     }
   }
 
-  static async isLoged(req: Request, res: Response) {
+  static async me(req: Request, res: Response) {
+
     const { user } = req
 
     try {
       if (user.id) {
-        res.json({ loged: true })
+        res.json({ user })
       }
+
     } catch (error) {
       if (error instanceof Error) res.json({ loged: false })
     }
